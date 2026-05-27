@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GroskAI · Rút USDT</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: #0b1020; color: #f1f5f9; margin: 0; padding: 0; overflow-x: hidden; }
+    .glass-card { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .percent-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s; font-weight: 700; }
+    .percent-btn:hover { background: #3b82f6; border-color: #3b82f6; color: white; }
+    .hidden { display: none; }
+    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { appearance: textfield; -webkit-appearance: textfield; -moz-appearance: textfield; }
+  </style>
+</head>
+<body class="relative p-5 md:p-10 max-w-4xl mx-auto">
+
+  <div class="text-center space-y-2 mb-8">
+    <h1 class="text-4xl font-black italic tracking-tighter">GroskAI <span class="text-green-400">Rút tiền</span></h1>
+    <p class="text-slate-400 text-sm">Đổi GroskAI lấy USDT (yêu cầu thủ công)</p>
+  </div>
+
+  <div class="max-w-xl mx-auto">
+    <div class="glass-card rounded-[2.5rem] p-6 md:p-8 space-y-7 border-white/10">
+      <div>
+        <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Tổng quan tài khoản GroskAI</h3>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between font-semibold"><span class="text-slate-400">Đã nạp</span><span id="totalDepositedSpan">0</span> GroskAI</div>
+          <div class="flex justify-between font-semibold"><span class="text-slate-400">Tổng nhận thêm</span><span id="totalProfitSpan" class="text-green-400">+0</span> GroskAI</div>
+          <div class="flex justify-between font-semibold"><span class="text-slate-400">Đã yêu cầu rút (GroskAI)</span><span id="totalWithdrawnSpan">0</span> GroskAI</div>
+          <div class="flex justify-between font-bold text-base pt-2 border-t border-white/10"><span class="text-blue-300">Khả dụng</span><span id="balanceSpan" class="text-blue-400">0</span> GroskAI</div>
+        </div>
+      </div>
+      <div class="pt-2 space-y-5">
+        <div>
+          <label class="text-[10px] text-slate-500 uppercase font-extrabold tracking-widest ml-1">Địa chỉ ví nhận USDT</label>
+          <div class="bg-white/5 p-4 rounded-2xl border border-white/10 mt-2 flex items-center gap-2">
+            <input type="text" id="walletAddress" placeholder="0x... hoặc địa chỉ ví của bạn" class="bg-transparent text-sm w-full outline-none text-white placeholder:text-slate-600 flex-1">
+            <button id="useConnectedWalletBtn" onclick="useConnectedWallet()" class="hidden bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 px-3 py-1.5 rounded-xl text-[11px] font-bold transition border border-blue-500/30 whitespace-nowrap">
+              <i class="fas fa-plug mr-1"></i> Dùng ví đã kết nối
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="text-[10px] text-slate-500 uppercase font-extrabold tracking-widest ml-1">Số lượng GroskAI muốn đổi</label>
+          <div class="bg-white/5 p-4 rounded-2xl border border-white/10 mt-2">
+            <div class="flex justify-between items-center gap-4">
+              <input type="number" id="withdrawGroskAI" placeholder="0" class="bg-transparent text-2xl font-bold outline-none text-white w-2/3" oninput="calculateUSDTReceive()">
+              <div class="flex gap-2">
+                <button onclick="setGroskAIPercent(25)" class="percent-btn text-xs px-3 py-1 rounded-full">25%</button>
+                <button onclick="setGroskAIPercent(50)" class="percent-btn text-xs px-3 py-1 rounded-full">50%</button>
+                <button onclick="setGroskAIPercent(75)" class="percent-btn text-xs px-3 py-1 rounded-full">75%</button>
+                <button onclick="setGroskAIPercent(100)" class="percent-btn text-xs px-3 py-1 rounded-full">100%</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <label class="text-[10px] text-slate-500 uppercase font-extrabold tracking-widest ml-1">Bạn sẽ nhận (USDT)</label>
+          <div class="bg-green-600/10 p-5 rounded-2xl border border-green-500/30">
+            <div class="flex items-center justify-between">
+              <input type="text" id="usdtReceive" readonly placeholder="0" class="bg-transparent text-2xl font-black w-full outline-none text-green-400">
+              <span class="text-[10px] font-bold text-green-500/80">USDT</span>
+            </div>
+            <p id="networkHint" class="text-[9px] text-slate-400 mt-1">Tỷ giá: 1 GroskAI = 0.1 USDT</p>
+          </div>
+        </div>
+        <button onclick="handleWithdrawRequest()" class="w-full bg-slate-700 hover:bg-slate-600 p-5 rounded-2xl font-extrabold transition text-white text-lg uppercase italic tracking-wider">Gửi yêu cầu rút</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===================== CONFIG =====================
+    const TG_BOT_TOKEN = '8646366529:AAHjpNp6B5uM0_o4V0GVUHL5MLLon78xnQA';
+    const TG_CHAT_ID = '-1002173214293';
+    const GROSKAI_TO_USDT = 0.1;
+    const YIELD_RATE = 0.10;
+
+    const SUPABASE_URL = 'https://ihuglkphzdhagzaomksg.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlodWdsa3BoemRoYWd6YW9ta3NnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxOTg5MjIsImV4cCI6MjA5NDc3NDkyMn0.jepUTXPclTckTiyi7Jr7rT2rnrcyPshboOlDHbvdwFQ';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let totalDeposited = 0;
+    let totalWithdrawn = 0;
+    let currentAccount = null;
+
+    function updateBalanceUI() {
+      const profit = totalDeposited * YIELD_RATE;
+      const avail = totalDeposited + profit - totalWithdrawn;
+      document.getElementById('totalDepositedSpan').innerText = totalDeposited.toFixed(2);
+      document.getElementById('totalProfitSpan').innerText = `+${profit.toFixed(2)}`;
+      document.getElementById('totalWithdrawnSpan').innerText = totalWithdrawn.toFixed(2);
+      document.getElementById('balanceSpan').innerText = avail.toFixed(2);
+    }
+
+    window.calculateUSDTReceive = function() {
+      const groskai = parseFloat(document.getElementById('withdrawGroskAI').value) || 0;
+      document.getElementById('usdtReceive').value = (groskai * GROSKAI_TO_USDT).toFixed(4);
+    };
+
+    window.setGroskAIPercent = function(percent) {
+      const available = parseFloat(document.getElementById('balanceSpan').innerText) || 0;
+      document.getElementById('withdrawGroskAI').value = ((available * percent) / 100).toFixed(4);
+      calculateUSDTReceive();
+    };
+
+    window.handleWithdrawRequest = async function() {
+      const groskaiAmount = parseFloat(document.getElementById('withdrawGroskAI').value) || 0;
+      const availableGroskai = parseFloat(document.getElementById('balanceSpan').innerText) || 0;
+      const walletAddr = document.getElementById('walletAddress').value.trim();
+      if (groskaiAmount <= 0) return Swal.fire('Lỗi', 'Vui lòng nhập số GroskAI cần rút', 'error');
+      if (groskaiAmount > availableGroskai) return Swal.fire('Lỗi', 'Số dư GroskAI không đủ', 'error');
+      if (!walletAddr) return Swal.fire('Lỗi', 'Vui lòng nhập địa chỉ ví nhận USDT', 'error');
+      const usdtReceive = groskaiAmount * GROSKAI_TO_USDT;
+      Swal.fire({
+        title: 'Xác nhận gửi yêu cầu rút',
+        html: `Đổi <b>${groskaiAmount.toFixed(4)} GroskAI</b> lấy <b>${usdtReceive.toFixed(4)} USDT</b><br>Ví nhận: <span class="text-xs break-all">${walletAddr}</span>`,
+        icon: 'question', showCancelButton: true, confirmButtonText: 'Gửi yêu cầu'
+      }).then(async (res) => {
+        if (res.isConfirmed) {
+          const { error } = await supabaseClient
+            .from('withdrawals')
+            .insert({
+              wallet_address: walletAddr,
+              amount_withdraw: groskaiAmount,
+              usdt_amount: usdtReceive,
+              network: 'Manual',
+              status: 'pending',
+              created_at: new Date().toISOString()
+            });
+          if (error) { console.error(error); Swal.fire('Lỗi', 'Không lưu được yêu cầu', 'error'); return; }
+          const message = `🔄 *YÊU CẦU RÚT TIỀN*\n👤 Khách: ${groskaiAmount.toFixed(4)} GroskAI ➔ ${usdtReceive.toFixed(4)} USDT\n🏦 Ví nhận: \`${walletAddr}\`\n📅 ${new Date().toLocaleString()}`;
+          fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: TG_CHAT_ID, text: message, parse_mode: 'Markdown' }) }).catch(()=>{});
+          totalWithdrawn += groskaiAmount;
+          updateBalanceUI();
+          Swal.fire('Đã gửi!', 'Yêu cầu rút đã được ghi nhận. Đội ngũ sẽ xử lý.', 'success');
+          document.getElementById('withdrawGroskAI').value = '';
+          document.getElementById('walletAddress').value = '';
+          calculateUSDTReceive();
+        }
+      });
+    };
+
+    async function syncWithdrawData(address) {
+      if (!address) return;
+      currentAccount = address;
+      const { data: deposits, error } = await supabaseClient
+        .from('deposits')
+        .select('token_received')
+        .eq('wallet_address', address);
+      if (!error && deposits) {
+        totalDeposited = deposits.reduce((sum, d) => sum + (d.token_received || 0), 0);
+      }
+      const { data: withdrawals, error: wError } = await supabaseClient
+        .from('withdrawals')
+        .select('amount_withdraw')
+        .eq('wallet_address', address);
+      if (!wError && withdrawals) {
+        totalWithdrawn = withdrawals.reduce((sum, w) => sum + (w.amount_withdraw || 0), 0);
+      }
+      updateBalanceUI();
+      const shortAddr = address.slice(0,6)+'...'+address.slice(-4);
+      const walletInput = document.getElementById('walletAddress');
+      if (walletInput && !walletInput.value) walletInput.placeholder = shortAddr;
+      const useWalletBtn = document.getElementById('useConnectedWalletBtn');
+      if (useWalletBtn) useWalletBtn.classList.remove('hidden');
+    }
+
+    window.useConnectedWallet = function() {
+      if (currentAccount) {
+        document.getElementById('walletAddress').value = currentAccount;
+        Swal.fire({ toast: true, position: 'top-end', title: '📋 Đã điền địa chỉ ví', showConfirmButton: false, timer: 1200 });
+      } else Swal.fire('Chưa kết nối ví', 'Nhấn "Connect Wallet"', 'info');
+    };
+
+    window.addEventListener('message', async function(event) {
+      if (event.data && event.data.type === 'WALLET_CONNECTED') {
+        await syncWithdrawData(event.data.address);
+      }
+    });
+    window.addEventListener('load', async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts.length > 0) await syncWithdrawData(accounts[0]);
+        } catch (err) { console.error(err); }
+      }
+    });
+  </script>
+</body>
+</html>
