@@ -1,12 +1,12 @@
 {
-  "version": 2,
   "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
+    { "src": "*.html", "use": "@vercel/static" }
   ],
   "routes": [
+    { "src": "/Dashboard.html", "dest": "/Dashboard.html" },
+    { "src": "/Doc.html", "dest": "/Doc.html" },
+    { "src": "/Windraw.html", "dest": "/Windraw.html" },
+    { "src": "/Chat.html", "dest": "/Chat.html" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
