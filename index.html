@@ -166,7 +166,13 @@
         </header>
 
         <main class="flex-1">
-             <iframe id="mainFrame" src="Dashboard.html" title="Dashboard"></iframe>
+             <!-- CHỈ SỬA DÒNG NÀY: thêm allow -->
+             <iframe 
+                 id="mainFrame" 
+                 src="Dashboard.html" 
+                 title="Dashboard"
+                 allow="clipboard-read; clipboard-write; popups; popups-to-escape-sandbox">
+             </iframe>
          </main>
     </div>
 
@@ -238,7 +244,6 @@
             }
         }
 
-        // Khi Iframe load xong (lúc mới mở hoặc lúc đổi tab), tự động đẩy lại ví sang
         document.getElementById('mainFrame').addEventListener('load', function() {
             if (currentAccount) {
                 broadcastWalletToIframe(currentAccount);
@@ -346,7 +351,6 @@
             if (mobileAddr) mobileAddr.innerText = shortAddr;
         }
 
-        // Tự động quét ví có sẵn khi tải trang mẹ
         window.addEventListener('load', () => {
             if (window.ethereum && window.ethereum.selectedAddress) {
                 currentAccount = window.ethereum.selectedAddress;
@@ -355,7 +359,6 @@
             }
         });
 
-        // Lắng nghe thay đổi tài khoản từ Metamask
         if (window.ethereum) {
             window.ethereum.on('accountsChanged', function(accounts) {
                 if (accounts.length > 0) {
