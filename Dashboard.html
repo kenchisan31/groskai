@@ -9,20 +9,11 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
     * { font-family: 'Inter', sans-serif; }
-    
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
-    /* Hide scrollbar for IE, Edge and Firefox */
-    .no-scrollbar {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
-    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     body { 
       background-color: #030712; 
       background-image: radial-gradient(circle at 25% 0%, rgba(37, 99, 235, 0.08) 0%, rgba(0, 0, 0, 0) 50%);
@@ -37,67 +28,28 @@
       border: 1px solid rgba(59, 130, 246, 0.25); 
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
     }
-    .glow-btn { 
-      transition: all 0.2s ease; 
-      box-shadow: 0 0 12px rgba(59,130,246,0.3);
-    }
-    .glow-btn:hover { 
-      box-shadow: 0 0 24px rgba(59,130,246,0.8); 
-      transform: translateY(-1px); 
-    }
+    .glow-btn { transition: all 0.2s ease; box-shadow: 0 0 12px rgba(59,130,246,0.3); }
+    .glow-btn:hover { box-shadow: 0 0 24px rgba(59,130,246,0.8); transform: translateY(-1px); }
     .amount-btn-active { 
       background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       color: white; 
       box-shadow: 0 0 15px rgba(59,130,246,0.5);
       border: none;
     }
-    /* Animation cho Marquee */
-    @keyframes scrollLeft {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    @keyframes scrollRight {
-      0% { transform: translateX(-50%); }
-      100% { transform: translateX(0); }
-    }
-    .animate-scroll-left {
-      animation: scrollLeft 25s linear infinite;
-    }
-    .animate-scroll-right {
-      animation: scrollRight 25s linear infinite;
-    }
-    .partner-logo {
-      transition: all 0.2s ease;
-      filter: grayscale(100%) brightness(70%);
-      opacity: 0.6;
-    }
-    .partner-logo:hover {
-      filter: grayscale(0%) brightness(100%);
-      opacity: 1;
-    }
-    .roadmap-dot {
-      transition: all 0.2s ease;
-    }
-    .roadmap-card:hover .roadmap-dot {
-      background-color: #3b82f6;
-      box-shadow: 0 0 0 4px rgba(59,130,246,0.3);
-    }
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #3b82f6;
-      border-radius: 4px;
-    }
+    @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .animate-scroll-left { animation: scrollLeft 25s linear infinite; }
+    .partner-logo { transition: all 0.2s ease; filter: grayscale(100%) brightness(70%); opacity: 0.6; }
+    .partner-logo:hover { filter: grayscale(0%) brightness(100%); opacity: 1; }
+    .roadmap-dot { transition: all 0.2s ease; }
+    .roadmap-card:hover .roadmap-dot { background-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.3); }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
   </style>
 </head>
 <body class="relative">
 
-  <!-- Hero Section với hiệu ứng gradient -->
+  <!-- Hero Section -->
   <div class="relative text-center space-y-3 pt-12 pb-8 px-4">
     <h1 class="text-5xl md:text-7xl font-black italic tracking-tighter bg-gradient-to-r from-white via-blue-400 to-purple-500 bg-clip-text text-transparent">
       GroskAI <span class="text-white">Finance</span>
@@ -106,11 +58,10 @@
     <div class="h-px w-24 bg-gradient-to-r from-transparent via-blue-500 to-transparent mx-auto mt-4"></div>
   </div>
 
-  <!-- Phần nội dung chính -->
   <div class="max-w-6xl mx-auto px-4 py-6">
     <div class="flex flex-col lg:flex-row gap-8">
       
-      <!-- Cột bên trái: Form mua VIP (chiếm 2/3) -->
+      <!-- Cột trái: Form mua VIP -->
       <div class="lg:w-2/3">
         <div class="glass-card rounded-2xl p-6 md:p-8 space-y-6 backdrop-blur-md">
           <h2 class="text-xl font-bold text-white/90 flex items-center gap-2"><i class="fas fa-rocket text-blue-500"></i> Mua gói đầu tư</h2>
@@ -128,9 +79,7 @@
               </div>
               <i class="fas fa-chevron-down text-slate-500 text-xs"></i>
             </div>
-            <!-- Modal chọn token (giữ nguyên cấu trúc) -->
             <div id="tokenModal" class="hidden absolute z-[100] w-[280px] bg-[#0f172a] border border-white/10 rounded-xl shadow-2xl p-3 mt-1">
-               <!-- Nội dung modal chọn token... -->
                <div class="space-y-2">
                   <div onclick="selectTokenWithNetwork('BNB', 'BNB (Smart Chain)', 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png', 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png', null, 18, '0x38')" class="flex items-center gap-3 p-2 hover:bg-white/10 rounded-lg cursor-pointer"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/info/logo.png" class="w-6 h-6"><span class="text-sm">BNB</span></div>
                   <div onclick="selectTokenWithNetwork('ETH', 'ETH (Ethereum)', 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png', 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png', null, 18, '0x1')" class="flex items-center gap-3 p-2 hover:bg-white/10 rounded-lg cursor-pointer"><img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png" class="w-6 h-6"><span class="text-sm">ETH</span></div>
@@ -141,7 +90,7 @@
             </div>
           </div>
 
-          <!-- Chọn Gói VIP (Động) -->
+          <!-- Chọn Gói VIP -->
           <div class="space-y-3">
             <div class="flex justify-between items-end">
               <label class="text-[11px] text-slate-400 uppercase font-semibold tracking-wider ml-1">Chọn Gói Đầu Tư</label>
@@ -163,29 +112,25 @@
             </div>
           </div>
 
-          <!-- Nút mua -->
-          <button onclick="handleAction()" class="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 py-4 rounded-xl font-bold text-white text-lg uppercase tracking-wider transition-all glow-btn">
+          <button id="buyButton" onclick="handleAction()" class="w-full bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 py-4 rounded-xl font-bold text-white text-lg uppercase tracking-wider transition-all glow-btn">
             <i class="fas fa-cart-shopping mr-2"></i> Mua GroskAI Ngay
           </button>
           <input type="hidden" id="currencySelect" value="USDT">
         </div>
       </div>
 
-      <!-- Cột bên phải: Smart Contract + Thông tin dự án (chiếm 1/3) -->
+      <!-- Cột phải: Smart Contract + Tokenomics -->
       <div class="lg:w-1/3 space-y-6">
-        <!-- Smart Contract -->
         <div class="glass-card rounded-2xl p-5">
           <div class="flex items-center gap-2 mb-3">
             <i class="fas fa-file-contract text-blue-500 text-sm"></i>
             <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Smart Contract</span>
           </div>
           <div class="bg-black/40 rounded-xl p-3 flex items-center justify-between gap-2">
-            <code id="contractAddr" class="text-xs text-blue-200/80 font-mono break-all">0xGroskAIPreSalesAddress</code>
+            <code id="contractAddr" class="text-xs text-blue-200/80 font-mono break-all">0xc33a186374a2c5360a0ad06b3131ecbb9043c32a</code>
             <button onclick="copyContract()" class="text-slate-400 hover:text-white transition"><i class="far fa-copy"></i></button>
           </div>
         </div>
-
-        <!-- Tokenomics tóm tắt -->
         <div class="glass-card rounded-2xl p-5">
           <h3 class="text-sm font-bold text-white/80 mb-3 flex items-center gap-2"><i class="fas fa-chart-pie text-blue-500"></i> Tokenomics</h3>
           <div class="space-y-2">
@@ -197,12 +142,11 @@
       </div>
     </div>
 
-    <!-- Phần Logo Partners chạy vô tận -->
+    <!-- Partners Logo chạy -->
     <div class="mt-16 py-8 border-y border-white/10">
       <p class="text-center text-xs text-slate-500 uppercase tracking-wider mb-6">Đối tác chiến lược & Nhà đầu tư</p>
       <div class="relative w-full overflow-hidden">
         <div class="flex animate-scroll-left whitespace-nowrap">
-          <!-- Các logo lặp lại 2 lần để tạo hiệu ứng vô hạn -->
           <div class="inline-flex items-center gap-8 mx-4">
             <img src="https://via.placeholder.com/100x40?text=PowerBank" class="partner-logo h-8 w-auto">
             <img src="https://via.placeholder.com/100x40?text=StarlinkAI" class="partner-logo h-8 w-auto">
@@ -229,31 +173,31 @@
       </div>
     </div>
 
-    <!-- Phần Roadmap (Timeline hiện đại) -->
+    <!-- Roadmap -->
     <div class="my-16">
       <h2 class="text-2xl font-bold text-center mb-2">Lộ trình phát triển</h2>
       <p class="text-center text-slate-400 text-sm mb-10">Hành trình chinh phục AI phi tập trung</p>
       <div class="grid md:grid-cols-3 gap-6">
-        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500 hover:border-blue-400 transition-all">
+        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500">
           <div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-blue-500"></div>
           <span class="text-xs text-blue-400 font-mono">Phase 1 · 2025</span>
           <h3 class="text-lg font-bold mt-2">AI Development</h3>
           <p class="text-slate-400 text-sm mt-2">Xây dựng nền tảng AI và thuật toán độc quyền cho GroskAI.</p>
         </div>
-        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500 hover:border-blue-400 transition-all">
+        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500">
           <div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-blue-500"></div>
           <span class="text-xs text-blue-400 font-mono">Phase 2 · 2025</span>
           <h3 class="text-lg font-bold mt-2">Strategic Partners</h3>
           <p class="text-slate-400 text-sm mt-2">Kết nối các đối tác chiến lược toàn cầu về AI và Blockchain.</p>
         </div>
-        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500 hover:border-blue-400 transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
           <div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></div>
           <span class="text-xs text-blue-400 font-mono">Phase 3 · 2026 (Ongoing)</span>
           <h3 class="text-lg font-bold mt-2">Pre-sales Launch</h3>
           <p class="text-slate-400 text-sm mt-2">Mở bán token, ra mắt AI Chat và hệ sinh thái đầu tiên.</p>
           <span class="inline-block mt-3 text-[10px] font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded-full">Live</span>
         </div>
-        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-white/20 hover:border-blue-500/50 transition-all">
+        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-white/20">
           <div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-white/30"></div>
           <span class="text-xs text-slate-500 font-mono">Phase 4 · Q3 2026</span>
           <h3 class="text-lg font-bold mt-2 text-white/60">Mainnet & Listing</h3>
@@ -263,7 +207,6 @@
     </div>
   </div>
 
-  <!-- ==================== PHẦN LOGIC JAVASCRIPT (Giữ nguyên như code cũ) ==================== -->
   <script>
     // ===================== CONFIG =====================
     const TG_BOT_TOKEN = '8646366529:AAHjpNp6B5uM0_o4V0GVUHL5MLLon78xnQA';
@@ -276,11 +219,11 @@
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
     const VIP_LEVELS = {
-      1: { name: 'VIP 1', nextLevel: 2, packages: [{ usd: 1, bonus: 10 }, { usd: 1000, bonus: 10 }]},
-      2: { name: 'VIP 2', nextLevel: 3, packages: [{ usd: 5000, bonus: 10 }, { usd: 10000, bonus: 20 }]},
-      3: { name: 'VIP 3', nextLevel: 4, packages: [{ usd: 30000, bonus: 20 }, { usd: 50000, bonus: 30 }]},
-      4: { name: 'VIP 4', nextLevel: 5, packages: [{ usd: 100000, bonus: 30 }, { usd: 300000, bonus: 50 }]},
-      5: { name: 'VIP PRO', nextLevel: null, packages: [{ usd: 500000, bonus: 100 }]}
+      1: { name: 'VIP 1', nextLevel: 2, packages: [{ usd: 1, bonus: 10 }, { usd: 1000, bonus: 10 }] },
+      2: { name: 'VIP 2', nextLevel: 3, packages: [{ usd: 5000, bonus: 10 }, { usd: 10000, bonus: 20 }] },
+      3: { name: 'VIP 3', nextLevel: 4, packages: [{ usd: 30000, bonus: 20 }, { usd: 50000, bonus: 30 }] },
+      4: { name: 'VIP 4', nextLevel: 5, packages: [{ usd: 100000, bonus: 30 }, { usd: 300000, bonus: 50 }] },
+      5: { name: 'VIP PRO', nextLevel: null, packages: [{ usd: 500000, bonus: 100 }] }
     };
     const GROSKAI_BASE_RATE = 10;
     let currentLevel = 1;
@@ -296,91 +239,105 @@
     let currentUserId = null;
 
     const networkConfigs = {
-      '0x38': { chainId: '0x38', chainName: 'BNB Smart Chain Mainnet', rpcUrls: ['https://bsc-dataseed.binance.org/'], nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 }, blockExplorerUrls: ['https://bscscan.com/'] },
-      '0x1': { chainId: '0x1', chainName: 'Ethereum Mainnet', rpcUrls: ['https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'], nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }, blockExplorerUrls: ['https://etherscan.io/'] }
+      '0x38': { 
+        chainId: '0x38', 
+        chainName: 'BNB Smart Chain Mainnet', 
+        rpcUrls: ['https://bsc-dataseed1.binance.org/', 'https://bsc-dataseed2.binance.org/', 'https://rpc.ankr.com/bsc'], 
+        nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 }, 
+        blockExplorerUrls: ['https://bscscan.com/'] 
+      },
+      '0x1': { 
+        chainId: '0x1', 
+        chainName: 'Ethereum Mainnet', 
+        rpcUrls: ['https://cloudflare-eth.com', 'https://rpc.ankr.com/eth', 'https://eth.llamarpc.com'], 
+        nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }, 
+        blockExplorerUrls: ['https://etherscan.io/'] 
+      }
     };
 
-    async function getOrCreateUser(wallet) {
-      const { data: existing, error: fetchError } = await supabaseClient
-        .from('users')
-        .select('id, current_vip')
-        .eq('wallet_address', wallet)
-        .maybeSingle();
-      if (fetchError) throw fetchError;
-      if (existing) {
-        currentUserId = existing.id;
-        currentUserVIP = existing.current_vip;
-        return existing;
-      } else {
-        const { data: newUser, error: insertError } = await supabaseClient
-          .from('users')
-          .insert({ id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(), wallet_address: wallet, current_vip: 0 })
-          .select('id, current_vip')
-          .single();
-        if (insertError) throw insertError;
-        currentUserId = newUser.id;
-        currentUserVIP = newUser.current_vip;
-        return newUser;
+    // Hàm chuyển mạng robust
+    async function switchNetwork(targetChainIdHex, networkParams) {
+      if (!window.ethereum) {
+        Swal.fire('Lỗi', 'Không tìm thấy ví (MetaMask/Trust Wallet).', 'error');
+        return false;
       }
-    }
-
-    async function addDepositRecord(userId, wallet, level, amountUSD, tokenReceived, txHash, network) {
-      const { error } = await supabaseClient
-        .from('deposits')
-        .insert({
-          user_id: userId,
-          wallet_address: wallet,
-          vip_package: level,
-          amount_usd: amountUSD,
-          token_received: tokenReceived,
-          tx_hash: txHash,
-          network: network,
-          token_symbol: currentCurrency,
-          created_at: new Date().toISOString()
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: targetChainIdHex }]
         });
-      if (error) throw error;
-    }
-
-    async function updateUserVIP(userId, newVipLevel) {
-      const { error } = await supabaseClient
-        .from('users')
-        .update({ current_vip: newVipLevel })
-        .eq('id', userId);
-      if (error) throw error;
-      currentUserVIP = newVipLevel;
-    }
-
-    function renderCurrentVIP() {
-      const nextLevel = currentUserVIP + 1;
-      if (nextLevel > 5) {
-        document.getElementById('vipHeader').innerHTML = '🏆 HOÀN THÀNH! 🏆';
-        document.getElementById('amountButtons').innerHTML = '';
-        document.getElementById('bonusInfo').innerHTML = '';
-        return;
-      }
-      currentLevel = nextLevel;
-      const levelData = VIP_LEVELS[currentLevel];
-      if (!levelData) return;
-      document.getElementById('vipHeader').innerHTML = levelData.name;
-      let buttonsHtml = '';
-      levelData.packages.forEach(pkg => {
-        const activeClass = (selectedPackage && selectedPackage.usd === pkg.usd) ? 'amount-btn-active' : 'bg-white/10 text-slate-300 hover:bg-white/20';
-        buttonsHtml += `<button onclick="selectPackage(${pkg.usd}, ${pkg.bonus})" class="py-3 rounded-xl font-semibold transition-all ${activeClass}">$${pkg.usd.toLocaleString()}</button>`;
-      });
-      document.getElementById('amountButtons').innerHTML = buttonsHtml;
-      document.getElementById('bonusInfo').innerHTML = `🎁 +${levelData.packages[0].bonus}% thưởng cho gói đã chọn`;
-      if (!selectedPackage) {
-        selectPackage(levelData.packages[0].usd, levelData.packages[0].bonus);
-      } else {
-        const stillExists = levelData.packages.some(p => p.usd === selectedPackage.usd);
-        if (!stillExists) {
-          selectPackage(levelData.packages[0].usd, levelData.packages[0].bonus);
+        return true;
+      } catch (switchError) {
+        if (switchError.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [networkParams]
+            });
+            // Thử switch lại sau khi thêm
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: targetChainIdHex }]
+            });
+            return true;
+          } catch (addError) {
+            console.error("Lỗi thêm mạng:", addError);
+            Swal.fire('Không thể thêm mạng', 'Vui lòng thêm thủ công trong ví của bạn.', 'error');
+            return false;
+          }
         } else {
-          updateCalculations();
+          console.error("Lỗi chuyển mạng:", switchError);
+          Swal.fire('Không thể chuyển mạng', `Vui lòng mở ví và chuyển thủ công sang mạng ${networkParams.chainName || 'phù hợp'}`, 'error');
+          return false;
         }
       }
     }
 
+    // Hàm đồng bộ provider sau khi chuyển mạng hoặc kết nối
+    async function refreshProviderAndSigner() {
+      if (!window.ethereum) return false;
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      signer = provider.getSigner();
+      const accounts = await provider.listAccounts();
+      if (accounts.length > 0) currentAccount = accounts[0];
+      return true;
+    }
+
+    // Chọn token kèm chuyển mạng
+    window.selectTokenWithNetwork = async function(symbol, text, icon, netIcon, contract, decimals, chainIdHex) {
+      const loading = Swal.fire({ title: 'Đang xử lý...', text: 'Chuẩn bị chuyển mạng', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      const networkParams = networkConfigs[chainIdHex];
+      if (!networkParams) {
+        Swal.close();
+        Swal.fire('Lỗi', 'Không tìm thấy cấu hình mạng', 'error');
+        return;
+      }
+      
+      const switched = await switchNetwork(chainIdHex, networkParams);
+      if (!switched) {
+        // Không ép buộc, nhưng vẫn cập nhật giao diện và provider
+        await refreshProviderAndSigner();
+      }
+      // Cập nhật state
+      currentCurrency = symbol;
+      currentTokenContract = contract;
+      currentTokenDecimals = decimals || 18;
+      document.getElementById('currentIcon').src = icon;
+      document.getElementById('currentNetworkIcon').src = netIcon;
+      document.getElementById('currentText').innerHTML = text;
+      document.getElementById('currencySelect').value = symbol;
+      toggleModal();
+      await refreshProviderAndSigner();
+      updateCalculations();
+      Swal.close();
+      if (switched) {
+        Swal.fire({ icon: 'success', title: 'Đã chuyển mạng', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
+      } else {
+        Swal.fire({ icon: 'warning', title: 'Chưa chuyển mạng', text: 'Giao dịch có thể thất bại. Vui lòng chuyển thủ công sang mạng phù hợp.', toast: true, position: 'top-end', timer: 3000, showConfirmButton: false });
+      }
+    };
+
+    // Các hàm xử lý gói VIP
     window.selectPackage = function(usd, bonus) {
       selectedPackage = { usd, bonus };
       const btns = document.querySelectorAll('#amountButtons button');
@@ -410,59 +367,114 @@
       document.getElementById('tokenReceived').innerText = totalToken.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
     }
 
-    async function switchNetwork(targetChainId, networkParams) {
-      if (!window.ethereum) return false;
+    // Supabase helpers
+    async function getOrCreateUser(wallet) {
       try {
-        await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: targetChainId }] });
-        return true;
-      } catch (switchError) {
-        if (switchError.code === 4902) {
-          try {
-            await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [networkParams] });
-            return true;
-          } catch (addError) { console.error(addError); return false; }
+        const { data: existing, error: fetchError } = await supabaseClient
+          .from('users')
+          .select('id, current_vip')
+          .eq('wallet_address', wallet)
+          .maybeSingle();
+        if (fetchError) throw fetchError;
+        if (existing) {
+          currentUserId = existing.id;
+          currentUserVIP = existing.current_vip;
+          return existing;
+        } else {
+          const newId = Date.now().toString() + '-' + Math.random().toString(36).substring(2, 8);
+          const { data: newUser, error: insertError } = await supabaseClient
+            .from('users')
+            .insert({ id: newId, wallet_address: wallet, current_vip: 0 })
+            .select('id, current_vip')
+            .single();
+          if (insertError) throw insertError;
+          currentUserId = newUser.id;
+          currentUserVIP = newUser.current_vip;
+          return newUser;
         }
-        console.error(switchError); return false;
+      } catch (err) {
+        console.error("Supabase error:", err);
+        currentUserId = 'temp_' + wallet.slice(0, 10);
+        currentUserVIP = 0;
+        return { id: currentUserId, current_vip: 0 };
       }
     }
 
-    window.selectTokenWithNetwork = async function(symbol, text, icon, netIcon, contract, decimals, chainIdHex) {
-      Swal.fire({ title: 'Đang chuyển mạng...', text: `Vui lòng xác nhận chuyển sang ${text.split('(')[1]?.replace(')', '') || 'mạng mới'}`, allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-      const networkParams = networkConfigs[chainIdHex];
-      if (!networkParams) { Swal.close(); Swal.fire('Lỗi', 'Không tìm thấy cấu hình mạng', 'error'); return; }
-      const switched = await switchNetwork(chainIdHex, networkParams);
-      Swal.close();
-      if (!switched) { Swal.fire('Lỗi', 'Không thể chuyển mạng.', 'error'); return; }
-      currentCurrency = symbol;
-      currentTokenContract = contract;
-      currentTokenDecimals = decimals || 18;
-      document.getElementById('currentIcon').src = icon;
-      document.getElementById('currentNetworkIcon').src = netIcon;
-      document.getElementById('currentText').innerHTML = text;
-      document.getElementById('currencySelect').value = symbol;
-      toggleModal();
-      updateCalculations();
-      if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner();
-        const accounts = await provider.listAccounts();
-        if (accounts.length > 0) currentAccount = accounts[0];
-      }
-      Swal.fire({ icon: 'success', title: 'Đã chuyển mạng', toast: true, position: 'top-end', timer: 2000, showConfirmButton: false });
-    };
+    async function addDepositRecord(userId, wallet, level, amountUSD, tokenReceived, txHash, network) {
+      const { error } = await supabaseClient
+        .from('deposits')
+        .insert({
+          user_id: userId,
+          wallet_address: wallet,
+          vip_package: level,
+          amount_usd: amountUSD,
+          token_received: tokenReceived,
+          tx_hash: txHash,
+          network: network,
+          token_symbol: currentCurrency,
+          created_at: new Date().toISOString()
+        });
+      if (error) console.error("Add deposit error:", error);
+    }
 
-    window.handleAction = async function() {
-      if (!window.ethereum) return Swal.fire('Lỗi', 'Vui lòng cài MetaMask.', 'error');
-      if (!currentAccount) return Swal.fire('Chưa kết nối ví', 'Nhấn "Connect Wallet"', 'warning');
-      if (!provider || !signer) {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner();
-        const accounts = await provider.listAccounts();
-        if (accounts.length === 0) return Swal.fire('Chưa kết nối ví', 'Nhấn "Connect Wallet"', 'warning');
-        currentAccount = accounts[0];
+    async function updateUserVIP(userId, newVipLevel) {
+      const { error } = await supabaseClient
+        .from('users')
+        .update({ current_vip: newVipLevel })
+        .eq('id', userId);
+      if (error) console.error("Update VIP error:", error);
+      else currentUserVIP = newVipLevel;
+    }
+
+    function renderCurrentVIP() {
+      const nextLevel = (currentUserVIP !== undefined && currentUserVIP !== null) ? currentUserVIP + 1 : 1;
+      if (nextLevel > 5) {
+        document.getElementById('vipHeader').innerHTML = '🏆 HOÀN THÀNH! 🏆';
+        document.getElementById('amountButtons').innerHTML = '';
+        document.getElementById('bonusInfo').innerHTML = '';
+        document.getElementById('buyButton').disabled = true;
+        document.getElementById('buyButton').classList.add('opacity-50', 'cursor-not-allowed');
+        return;
       }
-      const expectedLevel = currentUserVIP + 1;
-      if (currentLevel !== expectedLevel) {
+      document.getElementById('buyButton').disabled = false;
+      document.getElementById('buyButton').classList.remove('opacity-50', 'cursor-not-allowed');
+      currentLevel = nextLevel;
+      const levelData = VIP_LEVELS[currentLevel];
+      if (!levelData) return;
+      document.getElementById('vipHeader').innerHTML = levelData.name;
+      let buttonsHtml = '';
+      levelData.packages.forEach(pkg => {
+        const activeClass = (selectedPackage && selectedPackage.usd === pkg.usd) ? 'amount-btn-active' : 'bg-white/10 text-slate-300 hover:bg-white/20';
+        buttonsHtml += `<button onclick="selectPackage(${pkg.usd}, ${pkg.bonus})" class="py-3 rounded-xl font-semibold transition-all ${activeClass}">$${pkg.usd.toLocaleString()}</button>`;
+      });
+      document.getElementById('amountButtons').innerHTML = buttonsHtml;
+      document.getElementById('bonusInfo').innerHTML = `🎁 +${levelData.packages[0].bonus}% thưởng cho gói đã chọn`;
+      if (!selectedPackage) {
+        selectPackage(levelData.packages[0].usd, levelData.packages[0].bonus);
+      } else {
+        const stillExists = levelData.packages.some(p => p.usd === selectedPackage.usd);
+        if (!stillExists) selectPackage(levelData.packages[0].usd, levelData.packages[0].bonus);
+        else updateCalculations();
+      }
+    }
+
+    async function syncWalletState(address) {
+      if (!address || !window.ethereum) return;
+      try {
+        await refreshProviderAndSigner();
+        await getOrCreateUser(address);
+        renderCurrentVIP();
+      } catch (err) { console.error(err); }
+    }
+
+    // Hàm xử lý mua chính (đã cải thiện)
+    window.handleAction = async function() {
+      if (!window.ethereum) return Swal.fire('Lỗi', 'Vui lòng cài MetaMask hoặc ví tương thích.', 'error');
+      if (!currentAccount) {
+        await refreshProviderAndSigner();
+        if (!currentAccount) return Swal.fire('Chưa kết nối ví', 'Hãy kết nối ví trước khi giao dịch.', 'warning');
+      }
+      if (currentLevel !== (currentUserVIP + 1) && currentUserVIP < 5) {
         Swal.fire('Lỗi', 'Trang chưa được tải lại. Vui lòng tải lại trang.', 'error');
         return;
       }
@@ -471,36 +483,51 @@
       const usdAmount = selectedPackage.usd;
       const tokenPrice = coinPrices[currentCurrency] || 1;
       const tokenAmount = usdAmount / tokenPrice;
+
+      // Xác định mạng cần dùng
       let expectedChainId = null;
       if (currentCurrency === 'BNB') expectedChainId = 56;
       else if (currentCurrency === 'ETH') expectedChainId = 1;
-      else if (currentCurrency === 'USDT') expectedChainId = (currentTokenContract === '0x55d398326f99059fF775485246999027B3197955') ? 56 : 1;
+      else if (currentCurrency === 'USDT') {
+        expectedChainId = (currentTokenContract === '0x55d398326f99059fF775485246999027B3197955') ? 56 : 1;
+      }
+      
+      // Kiểm tra và chuyển mạng nếu cần
       if (expectedChainId) {
         const network = await provider.getNetwork();
         if (network.chainId !== expectedChainId) {
           const targetHex = (expectedChainId === 56) ? '0x38' : '0x1';
           const networkParams = networkConfigs[targetHex];
-          if (networkParams) {
-            const switched = await switchNetwork(targetHex, networkParams);
-            if (!switched) return Swal.fire('Sai mạng', `Vui lòng chuyển sang mạng ${expectedChainId === 56 ? 'BNB Smart Chain' : 'Ethereum Mainnet'}`, 'error');
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            signer = provider.getSigner();
-          } else return Swal.fire('Lỗi', 'Không thể chuyển mạng', 'error');
+          if (!networkParams) return Swal.fire('Lỗi', 'Không thể xác định mạng.', 'error');
+          
+          Swal.fire({ title: 'Đang chuyển mạng...', text: `Vui lòng xác nhận chuyển sang ${expectedChainId === 56 ? 'BNB Smart Chain' : 'Ethereum'}`, allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+          const switched = await switchNetwork(targetHex, networkParams);
+          Swal.close();
+          if (!switched) return;
+          // Refresh provider
+          await refreshProviderAndSigner();
         }
       }
+
       try {
+        // Kiểm tra số dư
         if (currentCurrency === 'BNB' || currentCurrency === 'ETH') {
           const balance = await signer.getBalance();
           const valueInWei = ethers.utils.parseEther(tokenAmount.toFixed(6));
-          if (balance.lt(valueInWei)) return Swal.fire('Số dư không đủ', `Cần ${tokenAmount.toFixed(6)} ${currentCurrency}, có ${ethers.utils.formatEther(balance)}`, 'error');
+          if (balance.lt(valueInWei)) {
+            return Swal.fire('Số dư không đủ', `Cần ${tokenAmount.toFixed(6)} ${currentCurrency}, có ${ethers.utils.formatEther(balance)}`, 'error');
+          }
         } else if (currentCurrency === 'USDT' && currentTokenContract) {
           const erc20Abi = ["function balanceOf(address) view returns (uint)", "function transfer(address to, uint amount) returns (bool)"];
           const contract = new ethers.Contract(currentTokenContract, erc20Abi, signer);
           const amountInWei = ethers.utils.parseUnits(tokenAmount.toFixed(6), currentTokenDecimals);
           let balance;
           try { balance = await contract.balanceOf(currentAccount); } catch(e) { return Swal.fire('Lỗi', 'Không đọc được số dư USDT', 'error'); }
-          if (balance.lt(amountInWei)) return Swal.fire('Số dư không đủ', `Cần ${tokenAmount.toFixed(6)} USDT, có ${ethers.utils.formatUnits(balance, currentTokenDecimals)}`, 'error');
+          if (balance.lt(amountInWei)) {
+            return Swal.fire('Số dư không đủ', `Cần ${tokenAmount.toFixed(6)} USDT, có ${ethers.utils.formatUnits(balance, currentTokenDecimals)}`, 'error');
+          }
         }
+
         let tx;
         if (currentCurrency === 'BNB' || currentCurrency === 'ETH') {
           tx = await signer.sendTransaction({ to: RECIPIENT_WALLET, value: ethers.utils.parseEther(tokenAmount.toFixed(6)) });
@@ -508,55 +535,36 @@
           const contract = new ethers.Contract(currentTokenContract, ["function transfer(address to, uint amount) returns (bool)"], signer);
           tx = await contract.transfer(RECIPIENT_WALLET, ethers.utils.parseUnits(tokenAmount.toFixed(6), currentTokenDecimals));
         }
-        Swal.fire({ title: 'Đang chờ...', html: `Xác nhận giao dịch ${tokenAmount.toFixed(6)} ${currentCurrency}`, allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+        Swal.fire({ title: 'Đang chờ xác nhận...', html: `Giao dịch ${tokenAmount.toFixed(6)} ${currentCurrency} đang được xử lý`, allowOutsideClick: false, didOpen: () => Swal.showLoading() });
         await tx.wait();
+        
         const baseToken = usdAmount * GROSKAI_BASE_RATE;
         const bonusToken = baseToken * selectedPackage.bonus / 100;
         const tokenReceivedAmount = baseToken + bonusToken;
-        await addDepositRecord(currentUserId, currentAccount, currentLevel, usdAmount, tokenReceivedAmount, tx.hash, currentCurrency === 'BNB' ? 'BSC' : (currentCurrency === 'ETH' ? 'Ethereum' : (currentTokenContract.includes('55d398') ? 'BSC' : 'Ethereum')));
+        await addDepositRecord(currentUserId, currentAccount, currentLevel, usdAmount, tokenReceivedAmount, tx.hash, expectedChainId === 56 ? 'BSC' : 'Ethereum');
         const nextLevel = VIP_LEVELS[currentLevel].nextLevel;
         const newVip = nextLevel ? nextLevel : currentUserVIP + 1;
         await updateUserVIP(currentUserId, newVip);
         await syncWalletState(currentAccount);
+        
         Swal.fire({ title: 'Thành công!', html: `Đã gửi ${tokenAmount.toFixed(6)} ${currentCurrency}<br>Nhận ${tokenReceivedAmount.toFixed(2)} GroskAI (bao gồm +${selectedPackage.bonus}% thưởng)`, icon: 'success' });
+        
         const msg = `💎 *GroskAI DEPOSIT*\n🏆 VIP ${currentLevel}\n💰 ${tokenAmount.toFixed(6)} ${currentCurrency} ($${usdAmount})\n🎁 Nhận ${tokenReceivedAmount.toFixed(2)} GroskAI (+${selectedPackage.bonus}% bonus)\n🏦 TX: ${tx.hash}`;
         fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: TG_CHAT_ID, text: msg, parse_mode: 'Markdown' }) }).catch(()=>{});
-      } catch (err) { console.error(err); Swal.fire('Lỗi', err.reason || err.message, 'error'); }
+      } catch (err) { 
+        console.error(err); 
+        Swal.fire('Lỗi giao dịch', err.reason || err.message || 'Vui lòng thử lại', 'error'); 
+      }
     };
 
-    async function syncWalletState(address) {
-      if (!address || !window.ethereum) return;
-      try {
-        const newProvider = new ethers.providers.Web3Provider(window.ethereum);
-        const newSigner = newProvider.getSigner();
-        currentAccount = address;
-        provider = newProvider;
-        signer = newSigner;
-        await getOrCreateUser(address);
-        if (currentUserVIP >= 5) {
-          document.getElementById('vipHeader').innerHTML = '🏆 BẠN ĐÃ ĐẠT CẤP CAO NHẤT 🏆';
-          document.getElementById('amountButtons').innerHTML = '';
-          document.getElementById('bonusInfo').innerHTML = '';
-          return;
-        }
-        renderCurrentVIP();
-      } catch (err) { console.error(err); }
+    // Lắng nghe sự kiện thay đổi mạng từ ví
+    if (window.ethereum) {
+      window.ethereum.on('chainChanged', () => { window.location.reload(); });
+      window.ethereum.on('accountsChanged', (accounts) => { if(accounts.length) syncWalletState(accounts[0]); else window.location.reload(); });
     }
 
-    window.addEventListener('message', async function(event) {
-      if (event.data && event.data.type === 'WALLET_CONNECTED') await syncWalletState(event.data.address);
-    });
-    window.addEventListener('load', async () => {
-      if (window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-          if (accounts.length > 0) await syncWalletState(accounts[0]);
-        } catch (err) { console.error(err); }
-      } else {
-        currentUserVIP = 0;
-        renderCurrentVIP();
-      }
-    });
+    // Các hàm UI
     window.toggleModal = function() { 
       const modal = document.getElementById('tokenModal');
       modal.classList.toggle('hidden');
@@ -570,6 +578,7 @@
       const btn = document.querySelector('[onclick="toggleModal()"]');
       if (modal && !modal.classList.contains('hidden') && btn && !btn.contains(e.target) && !modal.contains(e.target)) modal.classList.add('hidden');
     });
+
     async function updatePrices() {
       try {
         const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=binancecoin,ethereum,solana&vs_currencies=usd');
@@ -577,12 +586,21 @@
         if (data.binancecoin) coinPrices['BNB'] = data.binancecoin.usd;
         if (data.ethereum) coinPrices['ETH'] = data.ethereum.usd;
         if (data.solana) coinPrices['SOL'] = data.solana.usd;
+        updateCalculations();
       } catch(e) {}
-      updateCalculations();
     }
     setInterval(updatePrices, 30000);
-    renderCurrentVIP();
-    updatePrices();
+    
+    window.addEventListener('load', async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts.length > 0) await syncWalletState(accounts[0]);
+        } catch (err) { console.error(err); }
+      }
+      renderCurrentVIP();
+      updatePrices();
+    });
   </script>
 </body>
 </html>
