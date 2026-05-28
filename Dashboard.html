@@ -255,14 +255,27 @@
       }
     };
 
-    // Hàm chuyển mạng robust
+    // ========== GIẢI PHÁP IFRAME: lấy provider từ trang cha ==========
+    function getEthProvider() {
+      try {
+        if (window.parent && window.parent.ethereum) {
+          return window.parent.ethereum;
+        }
+      } catch (e) {
+        console.warn("Không thể truy cập parent.ethereum, fallback về window.ethereum");
+      }
+      return window.ethereum;
+    }
+
+    // Hàm chuyển mạng (dùng provider từ cha)
     async function switchNetwork(targetChainIdHex, networkParams) {
-      if (!window.ethereum) {
+      const eth = getEthProvider();
+      if (!eth) {
         Swal.fire('Lỗi', 'Không tìm thấy ví (MetaMask/Trust Wallet).', 'error');
         return false;
       }
       try {
-        await window.ethereum.request({
+        await eth.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: targetChainIdHex }]
         });
@@ -270,12 +283,11 @@
       } catch (switchError) {
         if (switchError.code === 4902) {
           try {
-            await window.ethereum.request({
+            await eth.request({
               method: 'wallet_addEthereumChain',
               params: [networkParams]
             });
-            // Thử switch lại sau khi thêm
-            await window.ethereum.request({
+            await eth.request({
               method: 'wallet_switchEthereumChain',
               params: [{ chainId: targetChainIdHex }]
             });
@@ -293,17 +305,18 @@
       }
     }
 
-    // Hàm đồng bộ provider sau khi chuyển mạng hoặc kết nối
+    // Hàm đồng bộ provider & signer từ provider gốc
     async function refreshProviderAndSigner() {
-      if (!window.ethereum) return false;
-      provider = new ethers.providers.Web3Provider(window.ethereum);
+      const eth = getEthProvider();
+      if (!eth) return false;
+      provider = new ethers.providers.Web3Provider(eth);
       signer = provider.getSigner();
       const accounts = await provider.listAccounts();
       if (accounts.length > 0) currentAccount = accounts[0];
       return true;
     }
 
-    // Chọn token kèm chuyển mạng
+    // Chọn token kèm chuyển mạng (dùng provider từ cha)
     window.selectTokenWithNetwork = async function(symbol, text, icon, netIcon, contract, decimals, chainIdHex) {
       const loading = Swal.fire({ title: 'Đang xử lý...', text: 'Chuẩn bị chuyển mạng', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
       const networkParams = networkConfigs[chainIdHex];
@@ -315,7 +328,6 @@
       
       const switched = await switchNetwork(chainIdHex, networkParams);
       if (!switched) {
-        // Không ép buộc, nhưng vẫn cập nhật giao diện và provider
         await refreshProviderAndSigner();
       }
       // Cập nhật state
@@ -459,7 +471,7 @@
     }
 
     async function syncWalletState(address) {
-      if (!address || !window.ethereum) return;
+      if (!address || !getEthProvider()) return;
       try {
         await refreshProviderAndSigner();
         await getOrCreateUser(address);
@@ -467,9 +479,9 @@
       } catch (err) { console.error(err); }
     }
 
-    // Hàm xử lý mua chính (đã cải thiện)
+    // Hàm xử lý mua chính (đã cải thiện, dùng provider từ cha)
     window.handleAction = async function() {
-      if (!window.ethereum) return Swal.fire('Lỗi', 'Vui lòng cài MetaMask hoặc ví tương thích.', 'error');
+      if (!getEthProvider()) return Swal.fire('Lỗi', 'Vui lòng cài MetaMask hoặc ví tương thích.', 'error');
       if (!currentAccount) {
         await refreshProviderAndSigner();
         if (!currentAccount) return Swal.fire('Chưa kết nối ví', 'Hãy kết nối ví trước khi giao dịch.', 'warning');
@@ -558,10 +570,11 @@
       }
     };
 
-    // Lắng nghe sự kiện thay đổi mạng từ ví
-    if (window.ethereum) {
-      window.ethereum.on('chainChanged', () => { window.location.reload(); });
-      window.ethereum.on('accountsChanged', (accounts) => { if(accounts.length) syncWalletState(accounts[0]); else window.location.reload(); });
+    // Lắng nghe sự kiện thay đổi mạng từ ví (dùng provider từ cha)
+    const ethProvider = getEthProvider();
+    if (ethProvider) {
+      ethProvider.on('chainChanged', () => { window.location.reload(); });
+      ethProvider.on('accountsChanged', (accounts) => { if(accounts.length) syncWalletState(accounts[0]); else window.location.reload(); });
     }
 
     // Các hàm UI
@@ -592,9 +605,10 @@
     setInterval(updatePrices, 30000);
     
     window.addEventListener('load', async () => {
-      if (window.ethereum) {
+      const ethLoaded = getEthProvider();
+      if (ethLoaded) {
         try {
-          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          const accounts = await ethLoaded.request({ method: 'eth_accounts' });
           if (accounts.length > 0) await syncWalletState(accounts[0]);
         } catch (err) { console.error(err); }
       }
