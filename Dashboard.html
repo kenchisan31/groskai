@@ -316,8 +316,13 @@
       return true;
     }
 
-    // Chọn token kèm chuyển mạng (dùng provider từ cha)
+    // ===== CHỌN TOKEN + LƯU VÀO SESSION STORAGE =====
     window.selectTokenWithNetwork = async function(symbol, text, icon, netIcon, contract, decimals, chainIdHex) {
+      // Lưu token đang chọn vào storage để khôi phục sau khi reload
+      sessionStorage.setItem('pendingToken', JSON.stringify({
+        symbol, text, icon, netIcon, contract, decimals, chainIdHex
+      }));
+
       const loading = Swal.fire({ title: 'Đang xử lý...', text: 'Chuẩn bị chuyển mạng', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
       const networkParams = networkConfigs[chainIdHex];
       if (!networkParams) {
@@ -479,7 +484,7 @@
       } catch (err) { console.error(err); }
     }
 
-    // Hàm xử lý mua chính (đã cải thiện, dùng provider từ cha)
+    // Hàm xử lý mua chính (có kiểm tra mạng trước)
     window.handleAction = async function() {
       if (!getEthProvider()) return Swal.fire('Lỗi', 'Vui lòng cài MetaMask hoặc ví tương thích.', 'error');
       if (!currentAccount) {
@@ -573,7 +578,10 @@
     // Lắng nghe sự kiện thay đổi mạng từ ví (dùng provider từ cha)
     const ethProvider = getEthProvider();
     if (ethProvider) {
-      ethProvider.on('chainChanged', () => { window.location.reload(); });
+      ethProvider.on('chainChanged', () => { 
+        // Reload trang để reset state, nhưng token đã được lưu trong sessionStorage
+        window.location.reload(); 
+      });
       ethProvider.on('accountsChanged', (accounts) => { if(accounts.length) syncWalletState(accounts[0]); else window.location.reload(); });
     }
 
@@ -604,7 +612,38 @@
     }
     setInterval(updatePrices, 30000);
     
+    // ===== KHÔI PHỤC TOKEN SAU KHI RELOAD (NẾU CÓ) =====
     window.addEventListener('load', async () => {
+      // Khôi phục token nếu có pending từ lần reload trước
+      const pendingToken = sessionStorage.getItem('pendingToken');
+      if (pendingToken) {
+        sessionStorage.removeItem('pendingToken'); // Xóa ngay để tránh lặp
+        try {
+          const tokenData = JSON.parse(pendingToken);
+          const eth = getEthProvider();
+          if (eth) {
+            const currentChainId = await eth.request({ method: 'eth_chainId' });
+            // Chỉ khôi phục nếu mạng hiện tại đã đúng với token yêu cầu
+            if (currentChainId === tokenData.chainIdHex) {
+              // Cập nhật state và UI
+              currentCurrency = tokenData.symbol;
+              currentTokenContract = tokenData.contract;
+              currentTokenDecimals = tokenData.decimals || 18;
+              document.getElementById('currentIcon').src = tokenData.icon;
+              document.getElementById('currentNetworkIcon').src = tokenData.netIcon;
+              document.getElementById('currentText').innerHTML = tokenData.text;
+              document.getElementById('currencySelect').value = tokenData.symbol;
+              await refreshProviderAndSigner();
+              updateCalculations();
+              console.log("✅ Đã khôi phục token:", tokenData.symbol);
+            } else {
+              console.log("Mạng chưa đúng, bỏ qua khôi phục token");
+            }
+          }
+        } catch(e) { console.error("Lỗi khôi phục token:", e); }
+      }
+
+      // Code cũ: kết nối ví và hiển thị VIP
       const ethLoaded = getEthProvider();
       if (ethLoaded) {
         try {
