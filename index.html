@@ -177,26 +177,32 @@
     </div>
 
     <div id="walletModal" class="wallet-modal">
-        <div class="wallet-modal-content">
-            <span class="close-modal" onclick="closeWalletModal()">&times;</span>
-            <h3 id="walletModalTitle" class="text-xl font-bold">Kết nối ví của bạn</h3>
-            <p id="walletModalDesc" style="color: #94a3b8; font-size: 14px; margin-bottom: 5px;">Chọn ví để bắt đầu giao dịch</p>
-            <div class="wallet-options">
-                <button class="wallet-btn" onclick="handleWalletSelection('metamask')">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask">
-                    <span>MetaMask</span>
-                </button>
-                <button class="wallet-btn" onclick="handleWalletSelection('trustwallet')">
-                    <img src="https://trustwallet.com/assets/images/media/assets/trust_platform.svg" alt="Trust Wallet">
-                    <span>Trust Wallet</span>
-                </button>
-                <button class="wallet-btn" onclick="handleWalletSelection('binance')">
-                    <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.svg" alt="Binance Wallet">
-                    <span>Binance Wallet</span>
-                </button>
-            </div>
+    <div class="wallet-modal-content" style="border-radius: 28px; padding: 24px 20px;">
+        <span class="close-modal" onclick="closeWalletModal()" style="font-size: 32px; top: 12px; right: 20px;">&times;</span>
+        <h3 id="walletModalTitle" class="text-xl font-bold" style="font-size: 1.5rem; margin-top: 8px;">Kết nối ví</h3>
+        <p id="walletModalDesc" style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">Chọn ví để bắt đầu giao dịch</p>
+        <div class="wallet-options" style="gap: 16px;">
+            <!-- MetaMask -->
+            <button class="wallet-btn" onclick="handleWalletSelection('metamask')" style="padding: 16px 20px; border-radius: 20px; background: #1e293b; gap: 18px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask" style="width: 36px; height: 36px;">
+                <span style="font-size: 18px; font-weight: 600;">MetaMask</span>
+            </button>
+            
+            <!-- Trust Wallet (Lấy từ GitHub gốc của Trust Wallet, không bao giờ lỗi) -->
+            <button class="wallet-btn" onclick="handleWalletSelection('trustwallet')" style="padding: 16px 20px; border-radius: 20px; background: #1e293b; gap: 18px;">
+                <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/smartchain/assets/0x4B0F1812e5Df2A09796481Ff14017e6005508003/logo.png" alt="Trust Wallet" style="width: 36px; height: 36px;">
+                <span style="font-size: 18px; font-weight: 600;">Trust Wallet</span>
+            </button>
+            
+            <!-- Binance Wallet -->
+            <button class="wallet-btn" onclick="handleWalletSelection('binance')" style="padding: 16px 20px; border-radius: 20px; background: #1e293b; gap: 18px;">
+                <img src="https://cryptologos.cc/logos/bnb-bnb-logo.png" alt="Binance Wallet" style="width: 36px; height: 36px;">
+                <span style="font-size: 18px; font-weight: 600;">Binance Wallet</span>
+            </button>
         </div>
     </div>
+</div>
+</div>
 
     <script>
         let currentAccount = null;
