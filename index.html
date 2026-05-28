@@ -26,7 +26,6 @@
 
         iframe { width: 100%; height: calc(100vh - 80px); border: none; }
 
-        /* MODAL CHỌN VÍ */
         .wallet-modal {
             display: none;
             position: fixed;
@@ -108,10 +107,10 @@
                 <i class="fas fa-chart-line w-5"></i> Dashboard
             </button>
             <button onclick="changePage('withdraw', this)" class="nav-link w-full flex items-center gap-4 p-4 rounded-xl text-slate-400 hover:bg-white/5 transition font-bold text-left">
-                <i class="fas fa-exchange-alt w-5"></i> Rút tiền
+                <i class="fas fa-exchange-alt w-5"></i> Withdraw
             </button>
             <button onclick="changePage('whitepaper', this)" class="nav-link w-full flex items-center gap-4 p-4 rounded-xl text-slate-400 hover:bg-white/5 transition font-bold text-left">
-                <i class="fas fa-book-open w-5"></i> White Page
+                <i class="fas fa-book-open w-5"></i> White Paper
             </button>
             <button onclick="changePage('aichat', this)" class="nav-link w-full flex items-center gap-4 p-4 rounded-xl text-slate-400 hover:bg-white/5 transition font-bold text-left">
                 <i class="fas fa-robot w-5"></i> AI Chat
@@ -140,10 +139,10 @@
                 <i class="fas fa-chart-line w-5"></i> Dashboard
             </button>
             <button onclick="changePage('withdraw', this)" class="nav-link w-full flex items-center gap-4 p-4 rounded-xl text-slate-400 hover:bg-white/5 transition font-bold text-left">
-                <i class="fas fa-exchange-alt w-5"></i> Rút tiền
+                <i class="fas fa-exchange-alt w-5"></i> Withdraw
             </button>
             <button onclick="changePage('whitepaper', this)" class="nav-link w-full flex items-center gap-4 p-4 rounded-xl text-slate-400 hover:bg-white/5 transition font-bold text-left">
-                <i class="fas fa-book-open w-5"></i> White Page
+                <i class="fas fa-book-open w-5"></i> White Paper
             </button>
             <button onclick="changePage('aichat', this)" class="nav-link w-full flex items-center gap-4 p-4 rounded-xl text-slate-400 hover:bg-white/5 transition font-bold text-left">
                 <i class="fas fa-robot w-5"></i> AI Chat
@@ -166,7 +165,6 @@
         </header>
 
         <main class="flex-1">
-             <!-- CHỈ SỬA DÒNG NÀY: thêm allow -->
              <iframe 
                  id="mainFrame" 
                  src="Dashboard.html" 
@@ -202,7 +200,7 @@
         </div>
     </div>
 </div>
-</div>
+    </div>
 
     <script>
         let currentAccount = null;
@@ -221,13 +219,13 @@
 
             if(page === 'whitepaper') {
                 frame.src = 'Doc.html';
-                title.innerText = 'Whitepaper';
+                title.innerText = 'White Paper';
             } else if(page === 'aichat') {
                 frame.src = 'Chat.html';
                 title.innerText = 'Grosk AI Chat';
             } else if(page === 'withdraw') {
                 frame.src = 'Windraw.html';
-                title.innerText = 'Rút tiền';
+                title.innerText = 'Withdraw';
             } else {
                 frame.src = 'Dashboard.html';
                 title.innerText = 'Dashboard';
@@ -238,7 +236,6 @@
             }
         }
 
-        // ===================== QUẢN LÝ TÍN HIỆU IFRAME =====================
         function broadcastWalletToIframe(address) {
             const mainFrame = document.getElementById('mainFrame');
             if (mainFrame && mainFrame.contentWindow) {
@@ -246,7 +243,7 @@
                     type: 'WALLET_CONNECTED',
                     address: address
                 }, '*');
-                console.log("[Web.html] Đã đồng bộ địa chỉ ví sang Iframe:", address);
+                console.log("[Web.html] Synced wallet address to iframe:", address);
             }
         }
 
@@ -256,16 +253,15 @@
             }
         });
 
-        // ===================== MODAL VÍ =====================
         function openWalletModal() {
             const title = document.getElementById('walletModalTitle');
             const desc = document.getElementById('walletModalDesc');
             if (isMobile && !window.ethereum) {
-                title.innerText = 'Mở trong ví';
-                desc.innerText = 'Chọn ví để mở trang này trong ứng dụng';
+                title.innerText = 'Open in wallet';
+                desc.innerText = 'Choose a wallet to open this page in the app';
             } else {
-                title.innerText = 'Kết nối ví của bạn';
-                desc.innerText = 'Chọn ví để bắt đầu giao dịch';
+                title.innerText = 'Connect your wallet';
+                desc.innerText = 'Choose a wallet to start trading';
             }
             document.getElementById('walletModal').classList.add('active');
         }
@@ -276,7 +272,7 @@
 
         function handleConnectClick() {
             if (currentAccount) {
-                alert('Ví đã được kết nối: ' + currentAccount);
+                alert('Wallet already connected: ' + currentAccount);
                 return;
             }
             openWalletModal();
@@ -293,7 +289,7 @@
 
         async function connectWallet(walletType) {
             if (typeof window.ethereum === 'undefined') {
-                alert('Không tìm thấy ví điện tử. Vui lòng cài MetaMask hoặc Trust Wallet.');
+                alert('No wallet found. Please install MetaMask or Trust Wallet.');
                 return;
             }
 
@@ -319,9 +315,9 @@
             } catch (err) {
                 console.error(err);
                 if (err.code === 4001) {
-                    alert('Bạn đã từ chối kết nối ví.');
+                    alert('You rejected the connection request.');
                 } else {
-                    alert('Đã xảy ra lỗi khi kết nối ví.');
+                    alert('An error occurred while connecting the wallet.');
                 }
             }
         }
